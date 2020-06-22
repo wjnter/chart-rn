@@ -1,202 +1,205 @@
-import React, { useState, useEffect, Component } from "react";
-import {
-	Text,
-	View,
-	Dimensions,
-	StyleSheet,
-	Button,
-	TouchableOpacity,
-} from "react-native";
-import { CONSTANT_TYPE } from "./utils/index";
-import Chart from "./components/Chart";
-import FormLogin from "./components/FormLogin";
+import React, { useState, useEffect } from "react";
+import { AsyncStorage, Button, Text, TextInput, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { CONSTANT_TYPE, handleSetState } from "./utils";
+import HomeScreen from "./screens/HomeScreen";
+import SignInScreen from "./screens/SignInScreen";
+import { AuthContext, DataContext } from "./context";
 
-export default class App extends Component {
-	formRef = React.createRef();
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			ws: null,
-			category: "",
-			data: {
-				flame: 0,
-				gas: 0,
-				temperature: 0,
-				humidity: 0,
-			},
-		};
-	}
-
-	// componentDidMount() {
-	// 	this.connect();
-	// }
-
-	// timeout = 250; // Initial timeout duration as a class variable
-
-	// connect = () => {
-	// 	var ws = new WebSocket("ws://localhost:3300");
-	// 	// var ws = new WebSocket("ws://ute-endgame.herokuapp.com");
-	// 	let that = this; // cache the this
-	// 	var connectInterval;
-
-	// 	// websocket onopen event listener
-	// 	ws.onopen = () => {
-	// 		console.log("connected websocket main component");
-
-	// 		this.setState({ ws });
-
-	// 		that.timeout = 250; // reset timer to 250 on open of websocket connection
-	// 		clearTimeout(connectInterval); // clear Interval on on open of websocket connection
-	// 	};
-
-	// 	// websocket onclose event listener
-	// 	ws.onclose = (e) => {
-	// 		console.log(
-	// 			`Socket is closed. Reconnect will be attempted in ${Math.min(
-	// 				10000 / 1000,
-	// 				(that.timeout + that.timeout) / 1000
-	// 			)} second.`,
-	// 			e.reason
-	// 		);
-
-	// 		that.timeout = that.timeout + that.timeout; //increment retry interval
-	// 		connectInterval = setTimeout(this.check, Math.min(10000, that.timeout)); //call check function after timeout
-	// 	};
-
-	// 	ws.onmessage = (evt) => {
-	// 		this.handleUpdateData(evt.data);
-	// 	};
-
-	// 	// websocket onerror event listener
-	// 	ws.onerror = (err) => {
-	// 		console.error(
-	// 			"Socket encountered error: ",
-	// 			err.message,
-	// 			"Closing socket"
-	// 		);
-
-	// 		ws.close();
-	// 	};
-	// };
-	// check = () => {
-	// 	const { ws } = this.state;
-	// 	if (!ws || ws.readyState === WebSocket.CLOSED) this.connect(); //check if websocket instance is closed, if so call `connect` function.
-	// };
-	// handleUpdateData = (message) => {
-	// 	const data = JSON.parse(message);
-	// 	data &&
-	// 		data.map(({ type, time, value }) => {
-	// 			CONSTANT_TYPE.map(
-	// 				(item) =>
-	// 					item === type &&
-	// 					this.handleSetState({ type, data: value, category: time })
-	// 			);
-	// 			return true;
-	// 		});
-	// };
-	// handleSetState = ({ type, data, category }) => {
-	// 	this.setState({
-	// 		category,
-	// 		data: {
-	// 			...this.state.data,
-	// 			[type]: data,
-	// 		},
-	// 	});
-	// };
-
-	// validateLogin = ({ email, password }) => {
-
-	// }
-
-	getUserInfo = ({ email, password }) => {
-		console.log({ email, password });
-	};
-
-	render() {
-		const { category, data } = this.state;
-		return (
-			<View style={styles.container}>
-				<Text>Hello world </Text>
-				{/* <Chart labels={category} data={data.gas} /> */}
-				<FormLogin getUserInfo={this.getUserInfo} />
-			</View>
-		);
-	}
+function SplashScreen() {
+	return (
+		<View>
+			<Text>Loading...</Text>
+		</View>
+	);
 }
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#ecf0f1",
-	},
-});
+const Stack = createStackNavigator();
 
-// function HomeScreen() {
-//   const [dataState, setDataState] = useState(datasets);
-//   const [idInterval, setIdInterval] = useState(0);
-//   useEffect(() => {
-//     const idInterval = setInterval(() => {
-//       const randomData = Math.random() * 100;
-//       datasets[0].data.push(randomData);
-//       datasets[0].data.shift();
-//       console.log("state:::::::::", dataState);
-//       setDataState(datasets);
-//       setIdInterval(idInterval);
-//     }, 5000);
-//   }, [datasets]);
+const initData = [
+	{ id: "Node1", gas: 0, temperature: 0 },
+	{ id: "Node2", gas: 0, temperature: 0 },
+];
 
-//   const onClearTimer = () => () => clearInterval(idInterval);
+export default function App({ navigation }) {
+	const [websocket, setWebsocket] = useState(null);
+	const [category, setCategory] = useState("");
+	const [data, setData] = useState(initData);
 
-//   return (
-//     <View style={styles.container}>
-//       <TouchableOpacity onPress={onClearTimer}>
-//         <Text>Clear Timber</Text>
-//       </TouchableOpacity>
-//       <Text>Bezier Line Chart</Text>
-//       <LineChart
-//         data={{
-//           labels,
-//           datasets: dataState
-//         }}
-//         onDataPointClick={(value, dataset, getColor) => {
-//           console.log("value dataset getColor", [value, dataset, getColor]);
-//         }}
-//         width={Dimensions.get("window").width} // from react-native
-//         height={220}
-//         yAxisLabel="$"
-//         yAxisSuffix="k"
-//         yAxisInterval={1} // optional, defaults to 1
-//         chartConfig={{
-//           backgroundColor: "#e26a00",
-//           backgroundGradientFrom: "#fb8c00",
-//           backgroundGradientTo: "#ffa726",
-//           decimalPlaces: 2, // optional, defaults to 2dp
-//           color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-//           labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-//           style: {
-//             borderRadius: 16
-//           },
-//           propsForDots: {
-//             r: "6",
-//             strokeWidth: "2",
-//             stroke: "#ffa726"
-//           }
-//         }}
-//         bezier
-//         style={{
-//           marginVertical: 8,
-//           borderRadius: 16
-//         }}
-//       />
-//       </View>
-//   );
-// }
+	const [state, dispatch] = React.useReducer(
+		(prevState, action) => {
+			switch (action.type) {
+				case "RESTORE_TOKEN":
+					return {
+						...prevState,
+						userToken: action.token,
+						isLoading: false,
+					};
+				case "SIGN_IN":
+					return {
+						...prevState,
+						isSignout: false,
+						userToken: action.token,
+					};
+				case "SIGN_OUT":
+					return {
+						...prevState,
+						isSignout: true,
+						userToken: null,
+					};
+			}
+		},
+		{
+			isLoading: true,
+			isSignout: false,
+			userToken: null,
+		}
+	);
 
-// function SettingsScreen() {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Settings!</Text>
-//     </View>
-//   );
-// }
+	React.useEffect(() => {
+		// Fetch the token from storage then navigate to our appropriate place
+		const bootstrapAsync = async () => {
+			let userToken;
+
+			try {
+				userToken = await AsyncStorage.getItem("userToken");
+			} catch (e) {
+				// Restoring token failed
+			}
+
+			// After restoring token, we may need to validate it in production apps
+
+			// This will switch to the App screen or Auth screen and this loading
+			// screen will be unmounted and thrown away.
+			dispatch({ type: "RESTORE_TOKEN", token: userToken });
+		};
+
+		bootstrapAsync();
+	}, []);
+
+	const authContext = React.useMemo(
+		() => ({
+			signIn: async (data) => {
+				// In a production app, we need to send some data (usually username, password) to server and get a token
+				// We will also need to handle errors if sign in failed
+				// After getting token, we need to persist the token using `AsyncStorage`
+				// In the example, we'll use a dummy token
+
+				dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+			},
+			signOut: () => dispatch({ type: "SIGN_OUT" }),
+			signUp: async (data) => {
+				// In a production app, we need to send user data to server and get a token
+				// We will also need to handle errors if sign up failed
+				// After getting token, we need to persist the token using `AsyncStorage`
+				// In the example, we'll use a dummy token
+
+				dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+			},
+		}),
+		[]
+	);
+	// const url = "ws://45.119.83.71:3300/";
+	const url = "ws://localhost:3300";
+	const connect = () => {
+		const ws = new WebSocket(url);
+		var connectInterval;
+
+		// websocket onopen event listener
+		ws.onopen = () => {
+			console.log("connected websocket main component");
+
+			setWebsocket(ws);
+
+			timeout = 250; // reset timer to 250 on open of websocket connection
+			clearTimeout(connectInterval); // clear Interval on on open of websocket connection
+		};
+
+		// websocket onclose event listener
+		ws.onclose = (e) => {
+			console.log(
+				`Socket is closed. Reconnect will be attempted in ${Math.min(
+					10000 / 1000,
+					(timeout + timeout) / 1000
+				)} second.`,
+				e.reason
+			);
+
+			timeout = timeout + timeout; //increment retry interval
+			connectInterval = setTimeout(check, Math.min(10000, timeout)); //call check function after timeout
+		};
+
+		ws.onmessage = (evt) => {
+			handleUpdateData(evt.data);
+		};
+
+		// websocket onerror event listener
+		ws.onerror = (err) => {
+			console.error(
+				"Socket encountered error: ",
+				err.message,
+				"Closing socket"
+			);
+
+			ws.close();
+		};
+	};
+	const check = () => {
+		if (!websocket || websocket.readyState === WebSocket.CLOSED) connect(); //check if websocket instance is closed, if so call `connect` function.
+	};
+
+	const handleUpdateData = (message) => {
+		let newData = [...data];
+		let category = "";
+		const dataMessage = JSON.parse(message);
+		dataMessage[0] !== null &&
+			dataMessage.map(({ type, time, valueNode1, valueNode2 }) => {
+				CONSTANT_TYPE.map((item) => {
+					if (item === type) {
+						[newData, category] = handleSetState({
+							type,
+							valueNode1,
+							valueNode2,
+							category: time,
+							newData,
+						});
+					}
+				});
+				return true;
+			});
+		setCategory(category);
+		setData(newData);
+	};
+
+	useEffect(() => connect(), []);
+
+	return (
+		<AuthContext.Provider value={authContext}>
+			<DataContext.Provider value={{ data, category }}>
+				<NavigationContainer>
+					<Stack.Navigator>
+						{state.isLoading ? (
+							// We haven't finished checking for the token yet
+							<Stack.Screen name="Splash" component={SplashScreen} />
+						) : state.userToken == null ? (
+							// No token found, user isn't signed in
+							<Stack.Screen
+								name="SignIn"
+								component={SignInScreen}
+								options={{
+									title: "Sign in",
+									// When logging out, a pop animation feels intuitive
+									animationTypeForReplace: state.isSignout ? "pop" : "push",
+								}}
+							/>
+						) : (
+							// User is signed in
+							<Stack.Screen name="Home" component={HomeScreen} />
+						)}
+					</Stack.Navigator>
+				</NavigationContainer>
+			</DataContext.Provider>
+		</AuthContext.Provider>
+	);
+}

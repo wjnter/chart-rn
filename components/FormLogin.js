@@ -1,84 +1,199 @@
-import React, { Component } from "react";
-import { Text, Alert, Button, View, StyleSheet } from "react-native";
-import { TextInput } from "react-native-paper";
+// import React from "react";
+// import { AsyncStorage, Button, Text, TextInput, View } from "react-native";
+// import { NavigationContainer } from "@react-navigation/native";
+// import { createStackNavigator } from "@react-navigation/stack";
+// import { CONSTANT_TYPE } from "./utils/index";
+// import { AuthContext, DataContext } from "../context";
 
-export default class FormLogin extends Component {
-	constructor(props) {
-		super(props);
+// function SplashScreen() {
+// 	return (
+// 		<View>
+// 			<Text>Loading...</Text>
+// 		</View>
+// 	);
+// }
 
-		this.state = {
-			email: "",
-			password: "",
-		};
-	}
+// const Stack = createStackNavigator();
 
-	go = () => {
-		const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-		if (reg.test(this.state.email)) {
-			alert("valid");
-		} else {
-			alert();
-		}
-	};
+// const initData = {
+// 	gas: 0,
+// 	temperature: 0,
+// };
 
-	onLogin() {
-		const { username, password } = this.state;
+// export default function App({ navigation }) {
+// 	const [websocket, setWebsocket] = useState(null);
+// 	const [category, setCategory] = useState("");
+// 	const [data, setData] = useState(initData);
 
-		// Alert.alert("Credentials", `${username} + ${password}`);
-		this.props.getUserInfo(this.state);
-	}
+// 	const [state, dispatch] = React.useReducer(
+// 		(prevState, action) => {
+// 			switch (action.type) {
+// 				case "RESTORE_TOKEN":
+// 					return {
+// 						...prevState,
+// 						userToken: action.token,
+// 						isLoading: false,
+// 					};
+// 				case "SIGN_IN":
+// 					return {
+// 						...prevState,
+// 						isSignout: false,
+// 						userToken: action.token,
+// 					};
+// 				case "SIGN_OUT":
+// 					return {
+// 						...prevState,
+// 						isSignout: true,
+// 						userToken: null,
+// 					};
+// 			}
+// 		},
+// 		{
+// 			isLoading: true,
+// 			isSignout: false,
+// 			userToken: null,
+// 		}
+// 	);
 
-	render() {
-		return (
-			<View style={styles.container}>
-				<Text style={styles.inputext}>Sample Login Form</Text>
-				<TextInput
-					value={this.state.email}
-					onChangeText={(email) => this.setState({ email })}
-					label="Email"
-					style={styles.input}
-				/>
-				<TextInput
-					value={this.state.password}
-					onChangeText={(password) => this.setState({ password })}
-					label="Password"
-					secureTextEntry={true}
-					style={styles.input}
-				/>
+// 	React.useEffect(() => {
+// 		// Fetch the token from storage then navigate to our appropriate place
+// 		const bootstrapAsync = async () => {
+// 			let userToken;
 
-				<Button
-					title={"Login"}
-					style={styles.input}
-					onPress={this.onLogin.bind(this)}
-				/>
-			</View>
-		);
-	}
-}
+// 			try {
+// 				userToken = await AsyncStorage.getItem("userToken");
+// 			} catch (e) {
+// 				// Restoring token failed
+// 			}
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: "center",
-		justifyContent: "center",
-		backgroundColor: "#00FFFF",
-	},
-	input: {
-		width: 200,
-		height: 44,
-		padding: 10,
-		borderWidth: 1,
-		borderColor: "black",
-		marginBottom: 10,
-	},
-	inputext: {
-		width: 200,
-		height: 44,
-		padding: 10,
-		textAlign: "center",
-		fontWeight: "bold",
-		borderWidth: 1,
-		borderColor: "black",
-		marginBottom: 10,
-	},
-});
+// 			// After restoring token, we may need to validate it in production apps
+
+// 			// This will switch to the App screen or Auth screen and this loading
+// 			// screen will be unmounted and thrown away.
+// 			dispatch({ type: "RESTORE_TOKEN", token: userToken });
+// 		};
+
+// 		bootstrapAsync();
+// 	}, []);
+
+// 	const authContext = React.useMemo(
+// 		() => ({
+// 			signIn: async (data) => {
+// 				// In a production app, we need to send some data (usually username, password) to server and get a token
+// 				// We will also need to handle errors if sign in failed
+// 				// After getting token, we need to persist the token using `AsyncStorage`
+// 				// In the example, we'll use a dummy token
+
+// 				dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+// 			},
+// 			signOut: () => dispatch({ type: "SIGN_OUT" }),
+// 			signUp: async (data) => {
+// 				// In a production app, we need to send user data to server and get a token
+// 				// We will also need to handle errors if sign up failed
+// 				// After getting token, we need to persist the token using `AsyncStorage`
+// 				// In the example, we'll use a dummy token
+
+// 				dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+// 			},
+// 		}),
+// 		[]
+// 	);
+
+// 	const connect = () => {
+// 		const ws = new WebSocket("ws://localhost:3300");
+// 		// var ws = new WebSocket("ws://ute-endgame.herokuapp.com");
+// 		let that = this; // cache the this
+// 		var connectInterval;
+
+// 		// websocket onopen event listener
+// 		ws.onopen = () => {
+// 			console.log("connected websocket main component");
+
+// 			setWebsocket(ws);
+
+// 			that.timeout = 250; // reset timer to 250 on open of websocket connection
+// 			clearTimeout(connectInterval); // clear Interval on on open of websocket connection
+// 		};
+
+// 		// websocket onclose event listener
+// 		ws.onclose = (e) => {
+// 			console.log(
+// 				`Socket is closed. Reconnect will be attempted in ${Math.min(
+// 					10000 / 1000,
+// 					(that.timeout + that.timeout) / 1000
+// 				)} second.`,
+// 				e.reason
+// 			);
+
+// 			that.timeout = that.timeout + that.timeout; //increment retry interval
+// 			connectInterval = setTimeout(check, Math.min(10000, that.timeout)); //call check function after timeout
+// 		};
+
+// 		ws.onmessage = (evt) => {
+// 			handleUpdateData(evt.data);
+// 		};
+
+// 		// websocket onerror event listener
+// 		ws.onerror = (err) => {
+// 			console.error(
+// 				"Socket encountered error: ",
+// 				err.message,
+// 				"Closing socket"
+// 			);
+
+// 			ws.close();
+// 		};
+// 	};
+// 	const check = () => {
+// 		if (!websocket || websocket.readyState === WebSocket.CLOSED) connect(); //check if websocket instance is closed, if so call `connect` function.
+// 	};
+// 	const handleUpdateData = (message) => {
+// 		const data = JSON.parse(message);
+// 		data &&
+// 			data.map(({ type, time, value }) => {
+// 				CONSTANT_TYPE.map(
+// 					(item) =>
+// 						item === type &&
+// 						handleSetState({ type, data: value, category: time })
+// 				);
+// 				return true;
+// 			});
+// 	};
+// 	const handleSetState = ({ type, data, category }) => {
+// 		const newData = {
+// 			...data,
+// 			[type]: data,
+// 		};
+// 		setCategory(category);
+// 		setData(newData);
+// 	};
+
+// 	useEffect(() => connect());
+
+// 	return (
+// 		<AuthContext.Provider value={authContext}>
+// 			<NavigationContainer>
+// 				<Stack.Navigator>
+// 					{state.isLoading ? (
+// 						// We haven't finished checking for the token yet
+// 						<Stack.Screen name="Splash" component={SplashScreen} />
+// 					) : state.userToken == null ? (
+// 						// No token found, user isn't signed in
+// 						<Stack.Screen
+// 							name="SignIn"
+// 							component={SignInScreen}
+// 							options={{
+// 								title: "Sign in",
+// 								// When logging out, a pop animation feels intuitive
+// 								animationTypeForReplace: state.isSignout ? "pop" : "push",
+// 							}}
+// 						/>
+// 					) : (
+// 						// User is signed in
+// 						<Stack.Screen name="Home" component={HomeScreen} />
+// 					)}
+// 				</Stack.Navigator>
+// 			</NavigationContainer>
+// 		</AuthContext.Provider>
+// 	);
+// }
