@@ -1,4 +1,5 @@
-export const CONSTANT_TYPE = ["gas", "temperature"];
+export const CONSTANT_TYPE = ["gas", "temperature", "battery"];
+export const CONSTANT_TYPE_AVG = ["avggas", "avgtemperature"];
 export const handleSetState = ({
 	type,
 	valueNode1,

@@ -6,38 +6,53 @@ export class Chart extends Component {
 	state = {
 		labels: [""],
 		data: [0],
+		daily: true,
 	};
 
 	handleUpdateData = () => {
-		const { data, labels } = this.state;
-		const newData = [...data];
-		const newLabels = [...labels];
-		newLabels.push(this.props.labels);
-		newLabels.length > 10 && newLabels.shift();
+		const { labels, data, daily } = this.props;
 
-		newData.push(this.props.data);
-		newData.length > 10 && newData.shift();
+		const newData = [...this.state.data];
+		const newLabels = [...this.state.labels];
+
+		if (daily) {
+			newLabels.push(labels);
+			newLabels.length > 10 && newLabels.shift();
+			newData.push(data);
+			newData.length > 10 && newData.shift();
+		} else {
+			newLabels.push(...labels);
+			newData.push(...data);
+			while (newLabels.length >= 10) {
+				newLabels.shift();
+				newData.shift();
+			}
+			// newLabels.length > 10 && newLabels.shift();
+			// newData.length > 10 && newData.shift();
+		}
+
 		this.setState({
 			labels: newLabels,
 			data: newData,
 		});
 	};
+
 	componentDidUpdate(prevProps) {
-		// Typical usage (don't forget to compare props):
-		if (this.props.labels !== prevProps.labels) {
+		const { labels, daily, data } = this.props;
+		if (labels !== prevProps.labels) {
 			this.handleUpdateData();
 		}
 	}
 
 	render() {
-		const { labels, data } = this.state;
+		const { labels, data, daily } = this.state;
 		return (
 			<View>
 				<Text>Bezier Line Chart</Text>
 				<LineChart
 					data={{
 						labels,
-						datasets: [{ data: [...data] }],
+						datasets: [{ data }],
 					}}
 					width={Dimensions.get("window").width} // from react-native
 					height={220}

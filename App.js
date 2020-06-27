@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AsyncStorage, Button, Text, TextInput, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { CONSTANT_TYPE, handleSetState } from "./utils";
+import { CONSTANT_TYPE, handleSetState, CONSTANT_TYPE_AVG } from "./utils";
 import HomeScreen from "./screens/HomeScreen";
 import SignInScreen from "./screens/SignInScreen";
 import { AuthContext, DataContext } from "./context";
@@ -18,14 +18,22 @@ function SplashScreen() {
 const Stack = createStackNavigator();
 
 const initData = [
-	{ id: "Node1", gas: 0, temperature: 0 },
-	{ id: "Node2", gas: 0, temperature: 0 },
+	{ id: "Node1", gas: "", temperature: "", battery: "" },
+	{ id: "Node2", gas: "", temperature: "", battery: "" },
 ];
+const initAvgData = {
+	category: [],
+	data: [
+		{ id: "Node1", avgTemperature: [""], avgGas: [""] },
+		{ id: "Node2", avgTemperature: [""], avgGas: [""] },
+	],
+};
 
 export default function App({ navigation }) {
 	const [websocket, setWebsocket] = useState(null);
 	const [category, setCategory] = useState("");
 	const [data, setData] = useState(initData);
+	const [avgData, setAvgData] = useState(initAvgData);
 
 	const [state, dispatch] = React.useReducer(
 		(prevState, action) => {
@@ -152,31 +160,64 @@ export default function App({ navigation }) {
 	const handleUpdateData = (message) => {
 		let newData = [...data];
 		let category = "";
+		let newAvgData = [
+			{
+				id: "Node1",
+				avgTemperature: [],
+				avgGas: [],
+			},
+			{
+				id: "Node2",
+				avgTemperature: [],
+				avgGas: [],
+			},
+		];
+		let newAvgCategory = [];
 		const dataMessage = JSON.parse(message);
-		dataMessage[0] !== null &&
-			dataMessage.map(({ type, time, valueNode1, valueNode2 }) => {
-				CONSTANT_TYPE.map((item) => {
-					if (item === type) {
-						[newData, category] = handleSetState({
-							type,
-							valueNode1,
-							valueNode2,
-							category: time,
-							newData,
-						});
-					}
+		if (dataMessage[0] !== null) {
+			if (dataMessage[0] !== "getAvgData") {
+				dataMessage.map(({ type, time, valueNode1, valueNode2 }) => {
+					CONSTANT_TYPE.map((item) => {
+						if (item === type) {
+							[newData, category] = handleSetState({
+								type,
+								valueNode1,
+								valueNode2,
+								category: time,
+								newData,
+							});
+						}
+					});
+					return true;
 				});
-				return true;
-			});
-		setCategory(category);
-		setData(newData);
+				setCategory(category);
+				setData(newData);
+			} else {
+				dataMessage[1].map((dataItem) => {
+					newAvgCategory.length < dataMessage[1].length / 2 &&
+						newAvgCategory.push(dataItem.date);
+					newAvgData.map((newAvgDataItem) => {
+						CONSTANT_TYPE_AVG.map((typeItem) => {
+							if (typeItem === dataItem.type.toLowerCase()) {
+								const keyOfValue = `value${newAvgDataItem.id}`; // -> valueNode1 or valueNode2
+								newAvgDataItem[dataItem.type].push(dataItem[keyOfValue]);
+							}
+							return true;
+						});
+						return true;
+					});
+					return true;
+				});
+				setAvgData({ category: newAvgCategory, data: newAvgData });
+			}
+		}
 	};
 
 	useEffect(() => connect(), []);
 
 	return (
 		<AuthContext.Provider value={authContext}>
-			<DataContext.Provider value={{ data, category }}>
+			<DataContext.Provider value={{ data, category, avgData, websocket }}>
 				<NavigationContainer>
 					<Stack.Navigator>
 						{state.isLoading ? (
