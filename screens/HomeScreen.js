@@ -1,16 +1,88 @@
-import React, { useState, useContext } from "react";
+// import React, { useState, useContext } from "react";
+// import Chart from "../components/Chart";
+// import { AuthContext, DataContext } from "../context";
+// import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+// import {
+// 	Switch,
+// 	ScrollView,
+// 	StyleSheet,
+// 	Text,
+// 	View,
+// 	TouchableOpacity,
+// 	Button,
+// } from "react-native";
+// import Constants from "expo-constants";
+// import Collapsible from "react-native-collapsible";
+
+// function SettingsScreen() {
+// 	return (
+// 		<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+// 			<Text>Settings!</Text>
+// 		</View>
+// 	);
+// }
+
+// const Tab = createBottomTabNavigator();
+
+// const initD = [10, 15, 10, 15, 10, 15, 10, 15, 10, 15];
+// const initL = [
+// 	"11:32:11",
+// 	"11:32:11",
+// 	"11:32:11",
+// 	"11:32:11",
+// 	"11:32:11",
+// 	"11:32:11",
+// 	"11:32:11",
+// 	"11:32:11",
+// 	"11:32:11",
+// 	"11:32:11",
+// ];
+
+// const TabScreen = () => {
+// 	const [collapsed, setCollapsed] = useState(true);
+// 	const { data, category } = useContext(DataContext);
+// 	return (
+// 		<View style={styles.container}>
+// 			<ScrollView contentContainerStyle={{ paddingTop: 10 }}>
+// 				<Text style={styles.title}>Accordion Example</Text>
+// 				<Chart labels={category} data={data} />
+// 				<Chart labels={category} data={data} />
+// 				<TouchableOpacity onPress={() => setCollapsed(!collapsed)}>
+// 					<View style={styles.header}>
+// 						<Text style={styles.headerText}>Single Collapsible</Text>
+// 					</View>
+// 				</TouchableOpacity>
+// 				<Collapsible collapsed={collapsed} align="center">
+// 					<Node1Screen />
+// 				</Collapsible>
+// 			</ScrollView>
+// 		</View>
+// 	);
+// };
+
+// export default function HomeScreen() {
+// 	return (
+// 		<Tab.Navigator>
+// 			<Tab.Screen name="Home" component={TabScreen} />
+// 			<Tab.Screen name="Settings" component={SettingsScreen} />
+// 		</Tab.Navigator>
+// 	);
+// }
+
+import React, { useState, useContext, useEffect } from "react";
 import Chart from "../components/Chart";
 import { AuthContext, DataContext } from "../context";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Colors } from "react-native-paper";
 import {
-	Switch,
 	ScrollView,
 	StyleSheet,
 	Text,
 	View,
 	TouchableOpacity,
-	Button,
 } from "react-native";
+import { Button, Icon } from "react-native-elements";
+import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import Collapsible from "react-native-collapsible";
 
@@ -22,46 +94,97 @@ function SettingsScreen() {
 	);
 }
 
+const Battery = () => {
+	const { data } = useContext(DataContext);
+	const [count, setCount] = useState(data[0].battery);
+	const setProgress = () => ({
+		position: "absolute",
+		left: 0,
+		top: 0,
+		width: `${count}%`,
+		height: "100%",
+		backgroundColor: "#ffa726",
+		borderRadius: 10,
+	});
+
+	useEffect(() => setCount(data[0].battery), [data[0].battery]);
+	return (
+		<View style={styles.battery}>
+			<View style={styles.box}>
+				<View style={setProgress()}></View>
+				<View style={(styles.progress, { flex: 1, alignSelf: "center" })}>
+					<Text style={{ flex: 1 }}>{count === 0 ? "" : count + "%"}</Text>
+				</View>
+			</View>
+		</View>
+	);
+};
+
 const Tab = createBottomTabNavigator();
 
 export default function HomeScreen() {
 	return (
-		<Tab.Navigator>
+		<Tab.Navigator
+			screenOptions={({ route }) => ({
+				tabBarIcon: ({ color, size }) => {
+					let iconName;
+
+					if (route.name === "Home") {
+						iconName = "linechart";
+					} else if (route.name === "Settings") {
+						iconName = "areachart";
+					}
+					return (
+						<Icon name={iconName} type="antdesign" color={color} size={size} />
+					);
+				},
+			})}
+			tabBarOptions={{
+				activeTintColor: "tomato",
+				inactiveTintColor: "gray",
+			}}
+		>
 			<Tab.Screen name="Home" component={TabScreen} />
 			<Tab.Screen name="Settings" component={SettingsScreen} />
 		</Tab.Navigator>
 	);
 }
 
-const initD = [10, 15, 10, 15, 10, 15, 10, 15, 10, 15];
-const initL = [
-	"11:32:11",
-	"11:32:11",
-	"11:32:11",
-	"11:32:11",
-	"11:32:11",
-	"11:32:11",
-	"11:32:11",
-	"11:32:11",
-	"11:32:11",
-	"11:32:11",
-];
-
 const TabScreen = () => {
 	const [collapsed, setCollapsed] = useState(true);
-	const [labels, setLabels] = useState(initL);
-	const [data, setData] = useState(initD);
+	const { data, category, websocket } = useContext(DataContext);
+
+	const sendData = () => {
+		try {
+			websocket.send("getAvgData"); //send data to the server
+		} catch (error) {
+			console.log(error); // catch error
+		}
+	};
+
+	const handleCollapse = () => {
+		setCollapsed(!collapsed);
+	};
+	useEffect(() => {
+		if (!collapsed) sendData();
+	}, [collapsed]);
 	return (
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ paddingTop: 10 }}>
-				<Text style={styles.title}>Accordion Example</Text>
-				<Chart labels={labels} data={data} />
-				<Chart labels={labels} data={data} />
-				<TouchableOpacity onPress={() => setCollapsed(!collapsed)}>
-					<View style={styles.header}>
-						<Text style={styles.headerText}>Single Collapsible</Text>
-					</View>
-				</TouchableOpacity>
+				<View style={styles.titleContainer}>
+					<Text style={styles.title}>Accordion Example</Text>
+					<Battery />
+				</View>
+				<Chart labels={category} data={data[0].gas} daily />
+				<Chart labels={category} data={data[0].temperature} daily />
+				<View style={styles.button}>
+					<Button
+						title="Outline button"
+						type="outline"
+						onPress={() => handleCollapse()}
+						buttonStyle={{ width: 160 }}
+					/>
+				</View>
 				<Collapsible collapsed={collapsed} align="center">
 					<Node1Screen />
 				</Collapsible>
@@ -71,17 +194,21 @@ const TabScreen = () => {
 };
 
 const Node1Screen = () => {
-	const { signOut } = useContext(AuthContext);
-	// const { data, category } = useContext(DataContext);
-	const [labels, setLabels] = useState(initL);
-	const [data, setData] = useState(initD);
+	const { avgData } = useContext(DataContext);
 	return (
 		<View style={{ flex: 1, backgroundColor: "white" }}>
 			<Text>Signed in!</Text>
-			<Button title="Sign out" onPress={signOut} />
 			<ScrollView>
-				<Chart labels={labels} data={data} />
-				<Chart labels={labels} data={data} />
+				<Chart
+					labels={avgData.category}
+					data={avgData.data[0].avgTemperature}
+					daily={false}
+				/>
+				<Chart
+					labels={avgData.category}
+					data={avgData.data[1].avgTemperature}
+					daily={false}
+				/>
 			</ScrollView>
 		</View>
 	);
@@ -94,10 +221,11 @@ const styles = StyleSheet.create({
 		paddingTop: Constants.statusBarHeight,
 	},
 	title: {
+		flex: 0.75,
 		textAlign: "center",
 		fontSize: 22,
 		fontWeight: "300",
-		marginBottom: 20,
+		marginBottom: 5,
 	},
 	header: {
 		backgroundColor: "#F5FCFF",
@@ -108,97 +236,34 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontWeight: "500",
 	},
-	content: {
-		padding: 20,
-		backgroundColor: "#fff",
-	},
-	active: {
-		backgroundColor: "rgba(255,255,255,1)",
-	},
-	inactive: {
-		backgroundColor: "rgba(245,252,255,1)",
-	},
-	selectors: {
-		marginBottom: 10,
+	titleContainer: {
+		flex: 1,
+		justifyContent: "space-between",
 		flexDirection: "row",
+		alignItems: "center",
 		justifyContent: "center",
 	},
-	selector: {
-		backgroundColor: "#F5FCFF",
-		padding: 10,
-	},
-	activeSelector: {
-		fontWeight: "bold",
-	},
-	selectTitle: {
-		fontSize: 14,
-		fontWeight: "500",
-		padding: 10,
-	},
-	multipleToggle: {
+	battery: {
+		flex: 0.25,
 		flexDirection: "row",
+		alignSelf: "center",
+	},
+	titleItem: {
+		flex: 0.6,
+	},
+	box: {
+		width: 100,
+		height: 20,
+		borderRadius: 10,
+		borderWidth: 2,
+		borderColor: Colors.amber300,
+		margin: 20,
+		position: "relative",
+		flex: 1,
+	},
+	button: {
+		flex: 1,
 		justifyContent: "center",
-		marginVertical: 30,
 		alignItems: "center",
 	},
-	multipleToggle__title: {
-		fontSize: 16,
-		marginRight: 8,
-	},
 });
-
-// import React, { useContext } from "react";
-// import Chart from "../components/Chart";
-// import {
-// 	AsyncStorage,
-// 	Button,
-// 	Text,
-// 	TextInput,
-// 	View,
-// 	ScrollView,
-// } from "react-native";
-// import { AuthContext, DataContext } from "../context";
-// import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
-// const Node1 = () => {
-// 	const { signOut } = useContext(AuthContext);
-// 	const { data, category, avgData, websocket } = useContext(DataContext);
-
-// 	const sendData = () => {
-// 		try {
-// 			websocket.send("getAvgData"); //send data to the server
-// 		} catch (error) {
-// 			console.log(error); // catch error
-// 		}
-// 	};
-
-// 	console.log("category homscreen:  ", avgData.category);
-// 	return (
-// 		<View>
-// 			<Text>Signed in!</Text>
-// 			<Button title="Sign out" onPress={signOut} />
-// 			<Button title="Get Average Data" onPress={sendData} />
-// 			<ScrollView>
-// 				<Chart labels={category} data={data[0].gas} daily={true} />
-// 				<Chart labels={category} data={data[0].temperature} daily={true} />
-// 				<Chart
-// 					labels={avgData.category}
-// 					data={avgData.data[0].avgTemperature}
-// 					daily={false}
-// 				/>
-// 			</ScrollView>
-// 		</View>
-// 	);
-// };
-
-// const HomeScreen = () => {
-// 	const Tab = createBottomTabNavigator();
-// 	return (
-// 		<Tab.Navigator>
-// 			<Tab.Screen name="Node 1" component={Node1} />
-// 			<Tab.Screen name="Node 2" component={Node1} />
-// 		</Tab.Navigator>
-// 	);
-// };
-
-// export default HomeScreen;

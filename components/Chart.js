@@ -1,5 +1,11 @@
 import React, { Component } from "react";
-import { Text, View, Dimensions } from "react-native";
+import {
+	Text,
+	View,
+	Dimensions,
+	StyleSheet,
+	TouchableOpacity,
+} from "react-native";
 import { LineChart } from "react-native-chart-kit";
 
 export class Chart extends Component {
@@ -27,8 +33,6 @@ export class Chart extends Component {
 				newLabels.shift();
 				newData.shift();
 			}
-			// newLabels.length > 10 && newLabels.shift();
-			// newData.length > 10 && newData.shift();
 		}
 
 		this.setState({
@@ -48,7 +52,9 @@ export class Chart extends Component {
 		const { labels, data, daily } = this.state;
 		return (
 			<View>
-				<Text>Bezier Line Chart</Text>
+				<View style={styles.title}>
+					<Text>Bezier Line Chart</Text>
+				</View>
 				<LineChart
 					data={{
 						labels,
@@ -85,5 +91,13 @@ export class Chart extends Component {
 		);
 	}
 }
-
+const styles = StyleSheet.create({
+	title: {
+		flex: 1,
+		justifyContent: "space-between",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+	},
+});
 export default Chart;

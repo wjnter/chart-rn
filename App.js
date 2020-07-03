@@ -113,6 +113,7 @@ export default function App({ navigation }) {
 	const connect = () => {
 		const ws = new WebSocket(url);
 		var connectInterval;
+		let timeout = 0;
 
 		// websocket onopen event listener
 		ws.onopen = () => {
