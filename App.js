@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AsyncStorage, Button, Text, TextInput, View } from "react-native";
+import { AsyncStorage, Button, Text, StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { CONSTANT_TYPE, handleSetState, CONSTANT_TYPE_AVG } from "./utils";
@@ -9,7 +9,7 @@ import { AuthContext, DataContext } from "./context";
 
 function SplashScreen() {
 	return (
-		<View>
+		<View style={styles.container}>
 			<Text>Loading...</Text>
 		</View>
 	);
@@ -37,6 +37,7 @@ export default function App({ navigation }) {
 
 	const [state, dispatch] = React.useReducer(
 		(prevState, action) => {
+			console.log("--trigger here", action.type);
 			switch (action.type) {
 				case "RESTORE_TOKEN":
 					return {
@@ -93,8 +94,8 @@ export default function App({ navigation }) {
 				// We will also need to handle errors if sign in failed
 				// After getting token, we need to persist the token using `AsyncStorage`
 				// In the example, we'll use a dummy token
-
-				dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+				connect();
+				console.log("value of ws", websocket);
 			},
 			signOut: () => dispatch({ type: "SIGN_OUT" }),
 			signUp: async (data) => {
@@ -145,12 +146,13 @@ export default function App({ navigation }) {
 
 		// websocket onerror event listener
 		ws.onerror = (err) => {
-			console.error(
-				"Socket encountered error: ",
-				err.message,
-				"Closing socket"
-			);
-
+			// console.error(
+			// 	"Socket encountered error: ",
+			// 	err.message,
+			// 	"Closing socket"
+			// );
+			console.log("error connection: ", err);
+			console.log("---- err");
 			ws.close();
 		};
 	};
@@ -214,7 +216,7 @@ export default function App({ navigation }) {
 		}
 	};
 
-	useEffect(() => connect(), []);
+	useEffect(() => dispatch({ type: "SIGN_IN", token: "dummy-auth-token" }), [websocket]);
 
 	return (
 		<AuthContext.Provider value={authContext}>
@@ -237,7 +239,19 @@ export default function App({ navigation }) {
 							/>
 						) : (
 							// User is signed in
-							<Stack.Screen name="Home" component={HomeScreen} />
+							<Stack.Screen name="Home" 
+								component={HomeScreen} 
+								options={{
+									// headerTitle: props => <LogoTitle {...props} />,
+									headerRight: () => (
+										<Button
+											onPress={() => authContext.signOut()}
+											title="Info"
+											color="#000"
+										/>
+									),
+								}}
+							/>
 						)}
 					</Stack.Navigator>
 				</NavigationContainer>
@@ -245,3 +259,11 @@ export default function App({ navigation }) {
 		</AuthContext.Provider>
 	);
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center'
+	}
+});

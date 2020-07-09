@@ -96,7 +96,8 @@ function SettingsScreen() {
 
 const Battery = () => {
 	const { data } = useContext(DataContext);
-	const [count, setCount] = useState(data[0].battery);
+	const [count, setCount] = useState(10);
+	// const [count, setCount] = useState(data[0].battery);
 	const setProgress = () => ({
 		position: "absolute",
 		left: 0,
@@ -107,7 +108,7 @@ const Battery = () => {
 		borderRadius: 10,
 	});
 
-	useEffect(() => setCount(data[0].battery), [data[0].battery]);
+	// useEffect(() => data[0].battery && setCount(data[0].battery), [data[0].battery]);
 	return (
 		<View style={styles.battery}>
 			<View style={styles.box}>
@@ -152,7 +153,7 @@ export default function HomeScreen() {
 
 const TabScreen = () => {
 	const [collapsed, setCollapsed] = useState(true);
-	const { data, category, websocket } = useContext(DataContext);
+	const { data, category, websocket, avgData } = useContext(DataContext);
 
 	const sendData = () => {
 		try {
@@ -160,11 +161,9 @@ const TabScreen = () => {
 		} catch (error) {
 			console.log(error); // catch error
 		}
-	};
+  };
 
-	const handleCollapse = () => {
-		setCollapsed(!collapsed);
-	};
+	const handleCollapse = () => setCollapsed(!collapsed);
 	useEffect(() => {
 		if (!collapsed) sendData();
 	}, [collapsed]);
@@ -186,7 +185,17 @@ const TabScreen = () => {
 					/>
 				</View>
 				<Collapsible collapsed={collapsed} align="center">
-					<Node1Screen />
+					{/* <Node1Screen /> */}
+          <Chart
+            labels={avgData.category}
+            data={avgData.data[0].avgTemperature}
+            daily={false}
+          />
+          <Chart
+            labels={avgData.category}
+            data={avgData.data[0].avgGas}
+            daily={false}
+          />
 				</Collapsible>
 			</ScrollView>
 		</View>
@@ -198,18 +207,16 @@ const Node1Screen = () => {
 	return (
 		<View style={{ flex: 1, backgroundColor: "white" }}>
 			<Text>Signed in!</Text>
-			<ScrollView>
-				<Chart
-					labels={avgData.category}
-					data={avgData.data[0].avgTemperature}
-					daily={false}
-				/>
-				<Chart
-					labels={avgData.category}
-					data={avgData.data[1].avgTemperature}
-					daily={false}
-				/>
-			</ScrollView>
+			<Chart
+        labels={avgData.category}
+        data={avgData.data[0].avgTemperature}
+        daily={false}
+      />
+      <Chart
+        labels={avgData.category}
+        data={avgData.data[0].avgGas}
+        daily={false}
+      />
 		</View>
 	);
 };

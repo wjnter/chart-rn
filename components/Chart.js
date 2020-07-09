@@ -20,6 +20,8 @@ export class Chart extends Component {
 
 		const newData = [...this.state.data];
 		const newLabels = [...this.state.labels];
+		const labelsForAvg = [""];
+		const dateForAvg = [0];
 
 		if (daily) {
 			newLabels.push(labels);
@@ -27,18 +29,23 @@ export class Chart extends Component {
 			newData.push(data);
 			newData.length > 10 && newData.shift();
 		} else {
-			newLabels.push(...labels);
-			newData.push(...data);
-			while (newLabels.length >= 10) {
-				newLabels.shift();
-				newData.shift();
+			labelsForAvg.push(...labels);
+			dateForAvg.push(...data);
+			while (labelsForAvg.length >= 10) {
+				labelsForAvg.shift();
+				dateForAvg.shift();
 			}
 		}
 
-		this.setState({
-			labels: newLabels,
-			data: newData,
-		});
+		daily ? 
+			this.setState({
+				labels: newLabels,
+				data: newData,
+			}) :
+			this.setState({
+				labels: labelsForAvg,
+				data: dateForAvg,
+			});
 	};
 
 	componentDidUpdate(prevProps) {
