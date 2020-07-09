@@ -18,8 +18,8 @@ function SplashScreen() {
 const Stack = createStackNavigator();
 
 const initData = [
-	{ id: "Node1", gas: "", temperature: "", battery: "" },
-	{ id: "Node2", gas: "", temperature: "", battery: "" },
+	{ id: "Node1", gas: "", temperature: "", battery: "", timbersaw: false },
+	{ id: "Node2", gas: "", temperature: "", battery: "", timbersaw: false },
 ];
 const initAvgData = {
 	category: [],
@@ -34,6 +34,7 @@ export default function App({ navigation }) {
 	const [category, setCategory] = useState("");
 	const [data, setData] = useState(initData);
 	const [avgData, setAvgData] = useState(initAvgData);
+	console.log("initial data: ", data[0]);
 
 	const [state, dispatch] = React.useReducer(
 		(prevState, action) => {

@@ -81,10 +81,10 @@ import {
 	View,
 	TouchableOpacity,
 } from "react-native";
-import { Button, Icon } from "react-native-elements";
-import { Ionicons } from "@expo/vector-icons";
+import { Button, Icon, colors } from "react-native-elements";
 import Constants from "expo-constants";
 import Collapsible from "react-native-collapsible";
+import Status from '../components/Status';
 
 function SettingsScreen() {
 	return (
@@ -96,7 +96,7 @@ function SettingsScreen() {
 
 const Battery = () => {
 	const { data } = useContext(DataContext);
-	const [count, setCount] = useState(10);
+	const [count, setCount] = useState(70);
 	// const [count, setCount] = useState(data[0].battery);
 	const setProgress = () => ({
 		position: "absolute",
@@ -105,7 +105,6 @@ const Battery = () => {
 		width: `${count}%`,
 		height: "100%",
 		backgroundColor: "#ffa726",
-		borderRadius: 10,
 	});
 
 	// useEffect(() => data[0].battery && setCount(data[0].battery), [data[0].battery]);
@@ -113,7 +112,7 @@ const Battery = () => {
 		<View style={styles.battery}>
 			<View style={styles.box}>
 				<View style={setProgress()}></View>
-				<View style={(styles.progress, { flex: 1, alignSelf: "center" })}>
+				<View style={{ flex: 1, alignSelf: "center", bottom: 2 }}>
 					<Text style={{ flex: 1 }}>{count === 0 ? "" : count + "%"}</Text>
 				</View>
 			</View>
@@ -163,6 +162,9 @@ const TabScreen = () => {
 		}
   };
 
+  console.log("data :   timbersaw    :", data[0].timbersaw);
+  console.log("data :   battery    :", data[0].battery);
+
 	const handleCollapse = () => setCollapsed(!collapsed);
 	useEffect(() => {
 		if (!collapsed) sendData();
@@ -172,6 +174,7 @@ const TabScreen = () => {
 			<ScrollView contentContainerStyle={{ paddingTop: 10 }}>
 				<View style={styles.titleContainer}>
 					<Text style={styles.title}>Accordion Example</Text>
+          <Status />
 					<Battery />
 				</View>
 				<Chart labels={category} data={data[0].gas} daily />
@@ -185,7 +188,6 @@ const TabScreen = () => {
 					/>
 				</View>
 				<Collapsible collapsed={collapsed} align="center">
-					{/* <Node1Screen /> */}
           <Chart
             labels={avgData.category}
             data={avgData.data[0].avgTemperature}
@@ -198,25 +200,6 @@ const TabScreen = () => {
           />
 				</Collapsible>
 			</ScrollView>
-		</View>
-	);
-};
-
-const Node1Screen = () => {
-	const { avgData } = useContext(DataContext);
-	return (
-		<View style={{ flex: 1, backgroundColor: "white" }}>
-			<Text>Signed in!</Text>
-			<Chart
-        labels={avgData.category}
-        data={avgData.data[0].avgTemperature}
-        daily={false}
-      />
-      <Chart
-        labels={avgData.category}
-        data={avgData.data[0].avgGas}
-        daily={false}
-      />
 		</View>
 	);
 };
@@ -266,11 +249,12 @@ const styles = StyleSheet.create({
 		borderColor: Colors.amber300,
 		margin: 20,
 		position: "relative",
-		flex: 1,
+    flex: 1,
+    overflow: 'hidden'
 	},
 	button: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-	},
+  },
 });
