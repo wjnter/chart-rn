@@ -37,15 +37,15 @@ export class Chart extends Component {
 			}
 		}
 
-		daily ? 
-			this.setState({
-				labels: newLabels,
-				data: newData,
-			}) :
-			this.setState({
-				labels: labelsForAvg,
-				data: dateForAvg,
-			});
+		daily
+			? this.setState({
+					labels: newLabels,
+					data: newData,
+			  })
+			: this.setState({
+					labels: labelsForAvg,
+					data: dateForAvg,
+			  });
 	};
 
 	componentDidUpdate(prevProps) {
@@ -56,7 +56,8 @@ export class Chart extends Component {
 	}
 
 	render() {
-		const { labels, data, daily } = this.state;
+		const { labels, data } = this.state;
+		const { unit } = this.props;
 		return (
 			<View>
 				<View style={styles.title}>
@@ -68,10 +69,10 @@ export class Chart extends Component {
 						datasets: [{ data }],
 					}}
 					width={Dimensions.get("window").width} // from react-native
-					height={220}
-					yAxisLabel="$"
-					yAxisSuffix="k"
+					height={280}
+					yAxisSuffix={unit}
 					yAxisInterval={1} // optional, defaults to 1
+					verticalLabelRotation={30}
 					chartConfig={{
 						backgroundColor: "#e26a00",
 						backgroundGradientFrom: "#fb8c00",

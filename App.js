@@ -34,11 +34,9 @@ export default function App({ navigation }) {
 	const [category, setCategory] = useState("");
 	const [data, setData] = useState(initData);
 	const [avgData, setAvgData] = useState(initAvgData);
-	console.log("initial data: ", data[0]);
 
 	const [state, dispatch] = React.useReducer(
 		(prevState, action) => {
-			console.log("--trigger here", action.type);
 			switch (action.type) {
 				case "RESTORE_TOKEN":
 					return {
@@ -217,7 +215,9 @@ export default function App({ navigation }) {
 		}
 	};
 
-	useEffect(() => dispatch({ type: "SIGN_IN", token: "dummy-auth-token" }), [websocket]);
+	useEffect(() => dispatch({ type: "SIGN_IN", token: "dummy-auth-token" }), [
+		websocket,
+	]);
 
 	return (
 		<AuthContext.Provider value={authContext}>
@@ -240,10 +240,10 @@ export default function App({ navigation }) {
 							/>
 						) : (
 							// User is signed in
-							<Stack.Screen name="Home" 
-								component={HomeScreen} 
+							<Stack.Screen
+								name="Home"
+								component={HomeScreen}
 								options={{
-									// headerTitle: props => <LogoTitle {...props} />,
 									headerRight: () => (
 										<Button
 											onPress={() => authContext.signOut()}
@@ -264,7 +264,7 @@ export default function App({ navigation }) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center'
-	}
+		justifyContent: "center",
+		alignItems: "center",
+	},
 });
