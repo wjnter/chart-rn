@@ -4,7 +4,7 @@ import React, { useContext } from "react";import {
   View,
   TextInput,
   Button,
-  TouchableHighlight,
+  TouchableOpacity,
   Image,
   Alert
 } from 'react-native';
@@ -17,29 +17,6 @@ const SignInScreen = () => {
 	const [password, setPassword] = React.useState("");
 
 	const { signIn } = React.useContext(AuthContext);
-		// return (
-			// <View style={styles.container}>
-			// <Text style={styles.inputext}>Sample Login Form</Text>
-			// 	<TextInput
-			// 		placeholder="Username"
-			// 		value={username}
-			// 		onChangeText={setUsername}
-			// 		style={styles.input}
-			// 	/>
-			// 	<TextInput
-			// 		placeholder="Password"
-			// 		value={password}
-			// 		onChangeText={setPassword}
-			// 		secureTextEntry
-			// 		style={styles.input}
-			// 	/>
-
-				
-			// 	<Button title="Sign in" onPress={() => signIn({ username, password })} 
-			// 		style={styles.input} />
-				
-			// </View>
-		// );
 		return (
       <View style={styles.container}>
         <View style={styles.inputContainer}>
@@ -60,9 +37,9 @@ const SignInScreen = () => {
 						secureTextEntry/>
         </View>
 
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => signIn({ username, password })}>
+        <TouchableOpacity style={[styles.buttonContainer, styles.loginButton]} onPress={() => signIn({ username, password })}>
           <Text style={styles.loginText}>Login</Text>
-        </TouchableHighlight>
+        </TouchableOpacity>
       </View>
     );
 };
@@ -94,8 +71,8 @@ const styles = StyleSheet.create({
       flex:1,
   },
   inputIcon:{
-    width:30,
-    height:30,
+    width:50,
+    height:50,
     marginLeft:15,
     justifyContent: 'center'
   },

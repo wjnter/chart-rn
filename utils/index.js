@@ -14,3 +14,9 @@ export const handleSetState = ({
 	newData = [...clonedData];
 	return [newData, category];
 };
+
+export const calculateTime = time => {
+	const hour = Math.floor(time);
+	const minute = +(time % 1).toFixed(1) * 60;
+	return `${hour} ${hour > 1 ? 'hours' : 'hour'} ${minute} ${minute > 1 ? 'minutes' : 'minute'}`
+}
