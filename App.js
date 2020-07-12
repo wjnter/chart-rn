@@ -2,10 +2,18 @@ import React, { useState, useEffect } from "react";
 import { AsyncStorage, Button, Text, StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { CONSTANT_TYPE, handleSetState, CONSTANT_TYPE_AVG } from "./utils";
+import {
+	CONSTANT_TYPE,
+	handleSetState,
+	CONSTANT_TYPE_AVG,
+	updateAvgData,
+} from "./utils";
 import HomeScreen from "./screens/HomeScreen";
 import SignInScreen from "./screens/SignInScreen";
 import { AuthContext, DataContext } from "./context";
+import { Notifications } from "expo";
+import * as Permissions from "expo-permissions";
+import Constants from "expo-constants";
 
 function SplashScreen() {
 	return (
@@ -29,7 +37,7 @@ const initAvgData = {
 	],
 };
 
-export default function App({ navigation }) {
+export default function App() {
 	const [websocket, setWebsocket] = useState(null);
 	const [category, setCategory] = useState("");
 	const [data, setData] = useState(initData);
@@ -94,7 +102,6 @@ export default function App({ navigation }) {
 				// After getting token, we need to persist the token using `AsyncStorage`
 				// In the example, we'll use a dummy token
 				connect();
-				console.log("value of ws", websocket);
 			},
 			signOut: () => dispatch({ type: "SIGN_OUT" }),
 			signUp: async (data) => {
@@ -159,6 +166,37 @@ export default function App({ navigation }) {
 		if (!websocket || websocket.readyState === WebSocket.CLOSED) connect(); //check if websocket instance is closed, if so call `connect` function.
 	};
 
+	const getPushNotificationPermissions = async () => {
+		const { status: existingStatus } = await Permissions.getAsync(
+			Permissions.NOTIFICATIONS
+		);
+		let finalStatus = existingStatus;
+
+		// only ask if permissions have not already been determined, because
+		// iOS won't necessarily prompt the user a second time.
+		if (existingStatus !== "granted") {
+			// Android remote notification permissions are granted during the app
+			// install, so this will only ask on iOS
+			const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+			finalStatus = status;
+		}
+		if (!Constants.isDevice) {
+			console.log("Must use physical device for Push Notifications");
+		}
+
+		// Stop here if the user did not grant permissions
+		if (finalStatus !== "granted") {
+			return;
+		}
+		console.log(finalStatus);
+
+		// Get the token that uniquely identifies this device
+		console.log(
+			"Notification Token: ",
+			await Notifications.getExpoPushTokenAsync()
+		);
+	};
+
 	const handleUpdateData = (message) => {
 		let newData = [...data];
 		let category = "";
@@ -178,20 +216,16 @@ export default function App({ navigation }) {
 		const dataMessage = JSON.parse(message);
 		if (dataMessage[0] !== null) {
 			if (dataMessage[0] !== "getAvgData") {
-				dataMessage.map(({ type, time, valueNode1, valueNode2 }) => {
-					CONSTANT_TYPE.map((item) => {
-						if (item === type) {
-							[newData, category] = handleSetState({
-								type,
-								valueNode1,
-								valueNode2,
-								category: time,
-								newData,
-							});
-						}
+				for (let dataInMessage of dataMessage) {
+					const { type, time, valueNode1, valueNode2 } = dataInMessage;
+					[newData, category] = updateAvgData({
+						type,
+						time,
+						valueNode1,
+						valueNode2,
+						newData,
 					});
-					return true;
-				});
+				}
 				setCategory(category);
 				setData(newData);
 			} else {
@@ -218,6 +252,9 @@ export default function App({ navigation }) {
 	useEffect(() => dispatch({ type: "SIGN_IN", token: "dummy-auth-token" }), [
 		websocket,
 	]);
+	// useEffect(() => {
+	// 	getPushNotificationPermissions();
+	// });
 
 	return (
 		<AuthContext.Provider value={authContext}>

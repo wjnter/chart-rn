@@ -11,12 +11,59 @@ export const handleSetState = ({
 		{ ...newData[0], [type]: valueNode1 },
 		{ ...newData[1], [type]: valueNode2 },
 	];
-	newData = [...clonedData];
-	return [newData, category];
+	return [clonedData, category];
 };
 
-export const calculateTime = time => {
+export const calculateTime = (time) => {
 	const hour = Math.floor(time);
 	const minute = +(time % 1).toFixed(1) * 60;
-	return `${hour} ${hour > 1 ? 'hours' : 'hour'} ${minute} ${minute > 1 ? 'minutes' : 'minute'}`
-}
+	return `${hour} ${hour > 1 ? "hours" : "hour"} ${minute} ${
+		minute > 1 ? "minutes" : "minute"
+	}`;
+};
+
+export const updateAvgData = ({
+	type,
+	time,
+	valueNode1,
+	valueNode2,
+	newData,
+}) => {
+	const getTypes = {
+		gas: () =>
+			handleSetState({
+				type,
+				valueNode1,
+				valueNode2,
+				category: time,
+				newData,
+			}),
+		temperature: () =>
+			handleSetState({
+				type,
+				valueNode1,
+				valueNode2,
+				category: time,
+				newData,
+			}),
+		timbersaw: () =>
+			handleSetState({
+				type,
+				valueNode1,
+				valueNode2,
+				category: time,
+				newData,
+			}),
+		battery: () =>
+			handleSetState({
+				type,
+				valueNode1,
+				valueNode2,
+				category: time,
+				newData,
+			}),
+	};
+	return getTypes[type]();
+};
+
+export const handleUpdateData = (message) => {};

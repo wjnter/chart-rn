@@ -7,12 +7,16 @@ import {
 	TouchableOpacity,
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
+import Notification from "./Notification";
 
 export class Chart extends Component {
 	state = {
 		labels: [""],
 		data: [0],
 		daily: true,
+		pointedData: "",
+		index: 0,
+		visible: false,
 	};
 
 	handleUpdateData = () => {
@@ -24,9 +28,9 @@ export class Chart extends Component {
 		const dateForAvg = [0];
 
 		if (daily) {
+			newData.push(data);
 			newLabels.push(labels);
 			newLabels.length > 10 && newLabels.shift();
-			newData.push(data);
 			newData.length > 10 && newData.shift();
 		} else {
 			labelsForAvg.push(...labels);
@@ -48,26 +52,43 @@ export class Chart extends Component {
 			  });
 	};
 
+	getVisible = (visibleProps) => this.setState({ visible: !visibleProps });
+
 	componentDidUpdate(prevProps) {
 		const { labels, daily, data } = this.props;
-		if (labels !== prevProps.labels) {
+		if (data !== prevProps.data) {
 			this.handleUpdateData();
 		}
 	}
+	showData = ({ index, value }) => {
+		this.setState({
+			visible: !this.state.visible,
+			pointedData: value,
+			index,
+		});
+	};
 
 	render() {
-		const { labels, data } = this.state;
-		const { unit } = this.props;
+		const { labels, data, visible, pointedData, index } = this.state;
+		const { unit, daily } = this.props;
+		console.log(`data: ${data}, unit: ${unit}, daily: ${daily}`);
 		return (
 			<View>
 				<View style={styles.title}>
 					<Text>Bezier Line Chart</Text>
 				</View>
+				<Notification
+					visible={visible}
+					title={"chart"}
+					body={`${pointedData + unit.trim()} at ${labels[index]}`}
+					getVisible={this.getVisible}
+				/>
 				<LineChart
 					data={{
 						labels,
 						datasets: [{ data }],
 					}}
+					onDataPointClick={this.showData}
 					width={Dimensions.get("window").width} // from react-native
 					height={280}
 					yAxisSuffix={unit}
