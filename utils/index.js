@@ -29,7 +29,7 @@ export const updateAvgData = ({
 	valueNode2,
 	newData,
 }) => {
-	const getTypes = {
+	const setValueOfTypes = {
 		gas: () =>
 			handleSetState({
 				type,
@@ -63,7 +63,7 @@ export const updateAvgData = ({
 				newData,
 			}),
 	};
-	return getTypes[type]();
+	return setValueOfTypes[type]();
 };
 
 export const handleUpdateData = (message) => {};

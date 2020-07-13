@@ -19,27 +19,29 @@ const SignInScreen = () => {
 	const { signIn } = React.useContext(AuthContext);
 		return (
       <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <Image style={styles.inputIcon} source={usernameImg}/>
-          <TextInput style={styles.inputs}
-              placeholder="Username"
-							value={username}
-							onChangeText={setUsername}
-              underlineColorAndroid='transparent'/>
-        </View>
-        
-        <View style={styles.inputContainer}>
-          <Image style={styles.inputIcon} source={passwordImg}/>
-          <TextInput style={styles.inputs}
-						placeholder="Password"
-						value={password}
-						onChangeText={setPassword}
-						secureTextEntry/>
-        </View>
+        <View style={styles.box}>
+          <View style={styles.inputContainer}>
+            <Image style={styles.inputIcon} source={usernameImg}/>
+            <TextInput style={styles.inputs}
+                placeholder="Username"
+                value={username}
+                onChangeText={setUsername}
+                underlineColorAndroid='transparent'/>
+          </View>
+          
+          <View style={styles.inputContainer}>
+            <Image style={styles.inputIcon} source={passwordImg}/>
+            <TextInput style={styles.inputs}
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry/>
+          </View>
 
-        <TouchableOpacity style={[styles.buttonContainer, styles.loginButton]} onPress={() => signIn({ username, password })}>
-          <Text style={styles.loginText}>Login</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={[styles.buttonContainer, styles.loginButton]} onPress={() => signIn({ username, password })}>
+            <Text style={styles.loginText}>Login</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
 };
@@ -52,6 +54,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#DCDCDC',
+  },
+  box: {
+    width: 330,
+    borderWidth: 1,
+    flex: 0.4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    borderColor: "#fff",
+    backgroundColor: "#F5FCFF"
   },
   inputContainer: {
       borderBottomColor: '#F5FCFF',
@@ -86,9 +98,11 @@ const styles = StyleSheet.create({
     borderRadius:30,
   },
   loginButton: {
-    backgroundColor: "#00b5ec",
+    backgroundColor: "#ffa726",
   },
   loginText: {
     color: 'white',
+    fontSize: 15,
+    fontWeight: "600"
   }
 });

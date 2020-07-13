@@ -14,6 +14,7 @@ import { AuthContext, DataContext } from "./context";
 import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import Constants from "expo-constants";
+import Notification from "./components/Notification";
 
 function SplashScreen() {
 	return (
@@ -42,6 +43,7 @@ export default function App() {
 	const [category, setCategory] = useState("");
 	const [data, setData] = useState(initData);
 	const [avgData, setAvgData] = useState(initAvgData);
+	const [visible, setVisible] = useState(false);
 
 	const [state, dispatch] = React.useReducer(
 		(prevState, action) => {
@@ -128,22 +130,24 @@ export default function App() {
 
 			setWebsocket(ws);
 
-			timeout = 250; // reset timer to 250 on open of websocket connection
-			clearTimeout(connectInterval); // clear Interval on on open of websocket connection
+			// timeout = 250; // reset timer to 250 on open of websocket connection
+			// clearTimeout(connectInterval); // clear Interval on on open of websocket connection
 		};
 
 		// websocket onclose event listener
 		ws.onclose = (e) => {
-			console.log(
-				`Socket is closed. Reconnect will be attempted in ${Math.min(
-					10000 / 1000,
-					(timeout + timeout) / 1000
-				)} second.`,
-				e.reason
-			);
+			// console.log(
+			// 	`Socket is closed. Reconnect will be attempted in ${Math.min(
+			// 		10000 / 1000,
+			// 		(timeout + timeout) / 1000
+			// 	)} second.`,
+			// 	e.reason
+			// );
 
-			timeout = timeout + timeout; //increment retry interval
-			connectInterval = setTimeout(check, Math.min(10000, timeout)); //call check function after timeout
+			// timeout = timeout + timeout; //increment retry interval
+			// connectInterval = setTimeout(check, Math.min(10000, timeout)); //call check function after timeout
+			console.log("try again. cannot connect to ws");
+			setVisible(!visible);
 		};
 
 		ws.onmessage = (evt) => {
@@ -157,8 +161,8 @@ export default function App() {
 			// 	err.message,
 			// 	"Closing socket"
 			// );
-			console.log("error connection: ", err);
-			console.log("---- err");
+			// console.log("error connection: ", err);
+			// console.log("---- err");
 			ws.close();
 		};
 	};
@@ -249,6 +253,9 @@ export default function App() {
 		}
 	};
 
+	
+	const getVisible = (visibleProps) => setVisible(!visibleProps);
+
 	useEffect(() => dispatch({ type: "SIGN_IN", token: "dummy-auth-token" }), [
 		websocket,
 	]);
@@ -257,44 +264,51 @@ export default function App() {
 	// });
 
 	return (
-		<AuthContext.Provider value={authContext}>
-			<DataContext.Provider value={{ data, category, avgData, websocket }}>
-				<NavigationContainer>
-					<Stack.Navigator>
-						{state.isLoading ? (
-							// We haven't finished checking for the token yet
-							<Stack.Screen name="Splash" component={SplashScreen} />
-						) : state.userToken == null ? (
-							// No token found, user isn't signed in
-							<Stack.Screen
-								name="SignIn"
-								component={SignInScreen}
-								options={{
-									title: "Sign in",
-									// When logging out, a pop animation feels intuitive
-									animationTypeForReplace: state.isSignout ? "pop" : "push",
-								}}
-							/>
-						) : (
-							// User is signed in
-							<Stack.Screen
-								name="Home"
-								component={HomeScreen}
-								options={{
-									headerRight: () => (
-										<Button
-											onPress={() => authContext.signOut()}
-											title="Info"
-											color="#000"
-										/>
-									),
-								}}
-							/>
-						)}
-					</Stack.Navigator>
-				</NavigationContainer>
-			</DataContext.Provider>
-		</AuthContext.Provider>
+		<>
+			<Notification
+				visible={visible}
+				title={"Error Connection"}
+				body={"Cannot connect to server. Please try again!"}
+				getVisible={getVisible}
+			/>
+			<AuthContext.Provider value={authContext}>
+				<DataContext.Provider value={{ data, category, avgData, websocket }}>
+					<NavigationContainer>
+						<Stack.Navigator>
+							{state.isLoading ? (
+								// We haven't finished checking for the token yet
+								<Stack.Screen name="Splash" component={SplashScreen} />
+							) : state.userToken == null ? (
+								<Stack.Screen
+									name="SignIn"
+									component={SignInScreen}
+									options={{
+										title: "Login to End Game UTE",
+										// When logging out, a pop animation feels intuitive
+										animationTypeForReplace: state.isSignout ? "pop" : "push",
+									}}
+								/>
+							) : (
+								// User is signed in
+								<Stack.Screen
+									name="Home"
+									component={HomeScreen}
+									options={{
+										headerRight: () => (
+											<Button
+												onPress={() => authContext.signOut()}
+												title="Info"
+												color="#000"
+											/>
+										),
+									}}
+								/>
+							)}
+						</Stack.Navigator>
+					</NavigationContainer>
+				</DataContext.Provider>
+			</AuthContext.Provider>
+		</>
 	);
 }
 

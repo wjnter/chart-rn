@@ -56,7 +56,7 @@ export class Chart extends Component {
 
 	componentDidUpdate(prevProps) {
 		const { labels, daily, data } = this.props;
-		if (data !== prevProps.data) {
+		if (labels !== prevProps.labels) {
 			this.handleUpdateData();
 		}
 	}
@@ -71,7 +71,6 @@ export class Chart extends Component {
 	render() {
 		const { labels, data, visible, pointedData, index } = this.state;
 		const { unit, daily } = this.props;
-		console.log(`data: ${data}, unit: ${unit}, daily: ${daily}`);
 		return (
 			<View>
 				<View style={styles.title}>
