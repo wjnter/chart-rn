@@ -14,6 +14,7 @@ import Constants from "expo-constants";
 import Collapsible from "react-native-collapsible";
 import Status from "../components/Status";
 import Notification from "../components/Notification";
+import { calculateTime } from "../utils";
 
 // function SettingsScreen() {
 // 	return (
@@ -36,14 +37,16 @@ const Battery = () => {
 		backgroundColor: "#ffa726",
 	});
 	const getVisible = (visibleProps) => setVisible(!visibleProps);
+	const timeLife = (count / 100) * 5;
+	const body = `Battery has ${calculateTime(timeLife)} remaining to live.`;
 
 	useEffect(() => setCount(data[0].battery || 0), [data[0].battery]);
 	return (
 		<>
 			<Notification
 				visible={visible}
-				title={"battery"}
-				body={"body battery"}
+				title={"Battery"}
+				body={body}
 				getVisible={getVisible}
 			/>
 			<TouchableOpacity

@@ -127,25 +127,11 @@ export default function App() {
 		// websocket onopen event listener
 		ws.onopen = () => {
 			console.log("connected websocket main component");
-
 			setWebsocket(ws);
-
-			// timeout = 250; // reset timer to 250 on open of websocket connection
-			// clearTimeout(connectInterval); // clear Interval on on open of websocket connection
 		};
 
 		// websocket onclose event listener
 		ws.onclose = (e) => {
-			// console.log(
-			// 	`Socket is closed. Reconnect will be attempted in ${Math.min(
-			// 		10000 / 1000,
-			// 		(timeout + timeout) / 1000
-			// 	)} second.`,
-			// 	e.reason
-			// );
-
-			// timeout = timeout + timeout; //increment retry interval
-			// connectInterval = setTimeout(check, Math.min(10000, timeout)); //call check function after timeout
 			console.log("try again. cannot connect to ws");
 			setVisible(!visible);
 		};
@@ -156,13 +142,6 @@ export default function App() {
 
 		// websocket onerror event listener
 		ws.onerror = (err) => {
-			// console.error(
-			// 	"Socket encountered error: ",
-			// 	err.message,
-			// 	"Closing socket"
-			// );
-			// console.log("error connection: ", err);
-			// console.log("---- err");
 			ws.close();
 		};
 	};
@@ -253,7 +232,6 @@ export default function App() {
 		}
 	};
 
-	
 	const getVisible = (visibleProps) => setVisible(!visibleProps);
 
 	useEffect(() => dispatch({ type: "SIGN_IN", token: "dummy-auth-token" }), [

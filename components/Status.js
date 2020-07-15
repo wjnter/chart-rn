@@ -15,12 +15,15 @@ const Status = () => {
 		backgroundColor: data[0].timbersaw ? good : danger,
 	};
 	const getVisible = (visibleProps) => setVisible(!visibleProps);
+	const body = data[0].timbersaw
+		? "I'm hearing sound of saw machine"
+		: "Safe forest!!";
 	return (
 		<View>
 			<Notification
 				visible={visible}
-				title={"status"}
-				body={"body status"}
+				title={"Status of Forest"}
+				body={body}
 				getVisible={getVisible}
 			/>
 			<TouchableOpacity onPress={() => setVisible(!visible)}>
