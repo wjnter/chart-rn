@@ -23,6 +23,7 @@ const SpeedUp = ({ nodeName }) => {
 	const { websocket } = useContext(DataContext);
 
 	const [selectedValue, setSelectedValue] = useState(selection[0].value);
+	const [sendD, setSendD] = useState(false);
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(selectedValue);
 	const [modalVisible, setModalVisible] = useState(false);
@@ -39,8 +40,9 @@ const SpeedUp = ({ nodeName }) => {
 	};
 
 	useEffect(() => {
-		if (value === selectedValue) {
+		if (value === selectedValue && sendD) {
 			sendData();
+			setSendD(false);
 		}
 	});
 
@@ -49,6 +51,16 @@ const SpeedUp = ({ nodeName }) => {
 			<Modal animationType="slide" transparent={true} visible={modalVisible}>
 				<View style={styles.centeredView}>
 					<View style={styles.pickerContainer}>
+						<Text
+							style={{
+								fontSize: 18,
+								textAlign: "center",
+								marginTop: 6,
+								fontWeight: "500",
+							}}
+						>
+							Chọn Thời Gian Gửi
+						</Text>
 						<Picker
 							selectedValue={open ? value : selectedValue}
 							style={{
@@ -81,6 +93,7 @@ const SpeedUp = ({ nodeName }) => {
 							onPress={() => {
 								setValue(selectedValue);
 								setModalVisible(!modalVisible);
+								setSendD(true);
 							}}
 						>
 							<Text style={styles.textStyle}>Chọn</Text>
@@ -102,8 +115,8 @@ const styles = StyleSheet.create({
 		width: 200,
 		height: 200,
 		backgroundColor: "#fff",
-		opacity: 0.95,
 		borderRadius: 20,
+		overflow: "hidden",
 	},
 	centeredView: {
 		flex: 1,
@@ -113,8 +126,16 @@ const styles = StyleSheet.create({
 	openButton: {
 		borderRadius: 20,
 		padding: 10,
-		elevation: 2,
 		marginHorizontal: 10,
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.32,
+		shadowRadius: 5.46,
+
+		elevation: 9,
 	},
 	textStyle: {
 		color: "white",

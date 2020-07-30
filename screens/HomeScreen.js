@@ -9,7 +9,6 @@ import Status from "../components/Status";
 import SpeedUp from "../components/SpeedUpButton";
 import Battery from "../components/Battery";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
@@ -20,11 +19,19 @@ export default function HomeScreen() {
 				tabBarIcon: ({ color, size }) => {
 					let iconName;
 
-					if (route.name === "FirstNode") {
-						iconName = "linechart";
-					} else if (route.name === "SecondNode") {
-						iconName = "areachart";
+					if (route.name === "Trạm 1") {
+						iconName = "bar-chart";
+					} else if (route.name === "Trạm 2") {
+						iconName = "line-chart";
 					}
+					return (
+						<Icon
+							name={iconName}
+							type="font-awesome"
+							color={color}
+							size={size}
+						/>
+					);
 					// return <AntDesign name={iconName} size={24} color="black" />;
 				},
 			})}
@@ -34,8 +41,8 @@ export default function HomeScreen() {
 				labelStyle: { fontSize: 16, fontWeight: "600" },
 			}}
 		>
-			<Tab.Screen name="Nút 1" component={FirstNode} />
-			<Tab.Screen name="Nút 2" component={SecondNode} />
+			<Tab.Screen name="Trạm 1" component={FirstNode} />
+			<Tab.Screen name="Trạm 2" component={SecondNode} />
 		</Tab.Navigator>
 	);
 }
@@ -78,7 +85,7 @@ const FirstNode = () => {
 				<View style={styles.button}>
 					<Button
 						title="Xem theo ngày"
-						type="outline"
+						type={collapsed ? "outline" : "solid"}
 						onPress={() => handleCollapse()}
 						buttonStyle={{ width: 160 }}
 					/>
@@ -144,7 +151,7 @@ const SecondNode = () => {
 				<View style={styles.button}>
 					<Button
 						title="Xem theo ngày"
-						type="outline"
+						type={collapsed ? "outline" : "solid"}
 						onPress={() => handleCollapse()}
 						buttonStyle={{ width: 160 }}
 					/>

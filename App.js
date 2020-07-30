@@ -191,40 +191,42 @@ export default function App() {
 			},
 		];
 		let newAvgCategory = [];
-		const dataMessage = JSON.parse(message);
-		if (dataMessage[0] !== null) {
-			if (dataMessage[0] !== "getAvgData") {
-				for (let dataInMessage of dataMessage) {
-					const { type, time, valueNode1, valueNode2 } = dataInMessage;
-					[newData, category] = updateAvgData({
-						type,
-						time,
-						valueNode1,
-						valueNode2,
-						newData,
-					});
-				}
-				setCategory(category);
-				setData(newData);
-			} else if (dataMessage[0] === "interval") {
-				console.log("received ...", dataMessage);
-			} else {
-				dataMessage[1].map((dataItem) => {
-					newAvgCategory.length < dataMessage[1].length / 2 &&
-						newAvgCategory.push(dataItem.date);
-					newAvgData.map((newAvgDataItem) => {
-						CONSTANT_TYPE_AVG.map((typeItem) => {
-							if (typeItem === dataItem.type.toLowerCase()) {
-								const keyOfValue = `value${newAvgDataItem.id}`; // -> valueNode1 or valueNode2
-								newAvgDataItem[dataItem.type].push(dataItem[keyOfValue]);
-							}
+		if (!message.includes("null") && message !== "") {
+			const dataMessage = JSON.parse(message);
+			if (dataMessage[0] !== null) {
+				if (dataMessage.length > 3 && dataMessage[0] !== null) {
+					for (let dataInMessage of dataMessage) {
+						const { type, time, valueNode1, valueNode2 } = dataInMessage;
+						[newData, category] = updateAvgData({
+							type,
+							time,
+							valueNode1,
+							valueNode2,
+							newData,
+						});
+					}
+					setCategory(category);
+					setData(newData);
+				} else {
+					if (dataMessage[0] === "getAvgData") {
+						dataMessage[1].map((dataItem) => {
+							newAvgCategory.length < dataMessage[1].length / 2 &&
+								newAvgCategory.push(dataItem.date);
+							newAvgData.map((newAvgDataItem) => {
+								CONSTANT_TYPE_AVG.map((typeItem) => {
+									if (typeItem === dataItem.type.toLowerCase()) {
+										const keyOfValue = `value${newAvgDataItem.id}`; // -> valueNode1 or valueNode2
+										newAvgDataItem[dataItem.type].push(dataItem[keyOfValue]);
+									}
+									return true;
+								});
+								return true;
+							});
 							return true;
 						});
-						return true;
-					});
-					return true;
-				});
-				setAvgData({ category: newAvgCategory, data: newAvgData });
+						setAvgData({ category: newAvgCategory, data: newAvgData });
+					}
+				}
 			}
 		}
 	};
@@ -245,7 +247,7 @@ export default function App() {
 			<Notification
 				visible={visible}
 				title={"Lỗi Kết Nối"}
-				body={"Không thể kết nối đến máy chủ. Vui lòng thử lại"}
+				body={"Không thể kết nối đến máy chủ.\n Vui lòng thử lại"}
 				getVisible={getVisible}
 			/>
 			<AuthContext.Provider value={authContext}>
