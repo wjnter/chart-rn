@@ -117,8 +117,8 @@ export default function App() {
 		}),
 		[]
 	);
-	// const url = "ws://45.119.83.71:3300/";
-	const url = "ws://localhost:3300";
+	const url = "ws://45.119.83.67:3300/";
+	// const url = "ws://localhost:3300";
 	const connect = () => {
 		const ws = new WebSocket(url);
 		var connectInterval;
@@ -237,6 +237,12 @@ export default function App() {
 	useEffect(() => dispatch({ type: "SIGN_IN", token: "dummy-auth-token" }), [
 		websocket,
 	]);
+
+	useEffect(() => {
+		if (+data[0].gas >= 60 || +data[0].temperature >= 60) {
+			console.log();
+		}
+	});
 	// useEffect(() => {
 	// 	getPushNotificationPermissions();
 	// });
@@ -261,7 +267,7 @@ export default function App() {
 									name="SignIn"
 									component={SignInScreen}
 									options={{
-										title: "Login to End Game UTE",
+										title: "Đăng nhập vào End Game UTE",
 										// When logging out, a pop animation feels intuitive
 										animationTypeForReplace: state.isSignout ? "pop" : "push",
 									}}
@@ -269,13 +275,13 @@ export default function App() {
 							) : (
 								// User is signed in
 								<Stack.Screen
-									name="Home"
+									name="End Game UTE"
 									component={HomeScreen}
 									options={{
 										headerRight: () => (
 											<Button
 												onPress={() => authContext.signOut()}
-												title="Info"
+												title="Đăng xuất"
 												color="#000"
 											/>
 										),

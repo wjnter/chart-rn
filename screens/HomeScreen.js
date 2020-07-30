@@ -15,14 +15,8 @@ import Collapsible from "react-native-collapsible";
 import Status from "../components/Status";
 import Notification from "../components/Notification";
 import { calculateTime } from "../utils";
-
-// function SettingsScreen() {
-// 	return (
-// 		<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-// 			<Text>Settings!</Text>
-// 		</View>
-// 	);
-// }
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { AntDesign } from "@expo/vector-icons";
 
 const Battery = () => {
 	const { data } = useContext(DataContext);
@@ -38,14 +32,14 @@ const Battery = () => {
 	});
 	const getVisible = (visibleProps) => setVisible(!visibleProps);
 	const timeLife = (count / 100) * 5;
-	const body = `Battery has ${calculateTime(timeLife)} remaining to live.`;
+	const body = `Pin còn hiệu lực trong ${calculateTime(timeLife)}.`;
 
 	useEffect(() => setCount(data[0].battery || 0), [data[0].battery]);
 	return (
 		<>
 			<Notification
 				visible={visible}
-				title={"Battery"}
+				title={"Thời lượng pin"}
 				body={body}
 				getVisible={getVisible}
 			/>
@@ -64,37 +58,37 @@ const Battery = () => {
 	);
 };
 
-// const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
-// export default function HomeScreen() {
-// 	return (
-// 		<Tab.Navigator
-// 			// screenOptions={({ route }) => ({
-// 			// 	tabBarIcon: ({ color, size }) => {
-// 			// 		let iconName;
+export default function HomeScreen() {
+	return (
+		<Tab.Navigator
+			screenOptions={({ route }) => ({
+				tabBarIcon: ({ color, size }) => {
+					let iconName;
 
-// 			// 		if (route.name === "Home") {
-// 			// 			iconName = "linechart";
-// 			// 		} else if (route.name === "Settings") {
-// 			// 			iconName = "areachart";
-// 			// 		}
-// 			// 		return (
-// 			// 			<Icon name={iconName} type="antdesign" color={color} size={size} />
-// 			// 		);
-// 			// 	},
-// 			// })}
-// 			tabBarOptions={{
-// 				activeTintColor: "tomato",
-// 				inactiveTintColor: "gray",
-// 			}}
-// 		>
-// 			<Tab.Screen name="Home" component={TabScreen} />
-// 			<Tab.Screen name="Settings" component={SettingsScreen} />
-// 		</Tab.Navigator>
-// 	);
-// }
+					if (route.name === "FirstNode") {
+						iconName = "linechart";
+					} else if (route.name === "SecondNode") {
+						iconName = "areachart";
+					}
+					// return <AntDesign name={iconName} size={24} color="black" />;
+				},
+			})}
+			tabBarOptions={{
+				activeTintColor: "tomato",
+				inactiveTintColor: "gray",
+				labelStyle: { fontSize: 16, fontWeight: "600" },
+			}}
+		>
+			<Tab.Screen name="Nút 1" component={FirstNode} />
+			<Tab.Screen name="Nút 2" component={SecondNode} />
+		</Tab.Navigator>
+	);
+}
 
-const HomeScreen = () => {
+// Node 1
+const FirstNode = () => {
 	const [collapsed, setCollapsed] = useState(true);
 	const { data, category, websocket, avgData } = useContext(DataContext);
 
@@ -114,7 +108,7 @@ const HomeScreen = () => {
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={{ paddingTop: 10 }}>
 				<View style={styles.titleContainer}>
-					<Text style={styles.title}>Accordion Example</Text>
+					<Text style={styles.title}>ĐỒ THỊ THỜI GIAN THỰC</Text>
 					<Status />
 					<Battery />
 				</View>
@@ -127,7 +121,7 @@ const HomeScreen = () => {
 				/>
 				<View style={styles.button}>
 					<Button
-						title="Outline button"
+						title="Xem theo ngày"
 						type="outline"
 						onPress={() => handleCollapse()}
 						buttonStyle={{ width: 160 }}
@@ -138,15 +132,15 @@ const HomeScreen = () => {
 						<>
 							<Chart
 								labels={avgData.category}
-								data={avgData.data[0].avgTemperature}
-								daily={false}
-								unit={" °C"}
-							/>
-							<Chart
-								labels={avgData.category}
 								data={avgData.data[0].avgGas}
 								daily={false}
 								unit={" %"}
+							/>
+							<Chart
+								labels={avgData.category}
+								data={avgData.data[0].avgTemperature}
+								daily={false}
+								unit={" °C"}
 							/>
 						</>
 					)}
@@ -156,7 +150,68 @@ const HomeScreen = () => {
 	);
 };
 
-export default HomeScreen;
+// 	Node 2
+const SecondNode = () => {
+	const [collapsed, setCollapsed] = useState(true);
+	const { data, category, websocket, avgData } = useContext(DataContext);
+
+	const sendData = () => {
+		try {
+			websocket.send("getAvgData"); //send data to the server
+		} catch (error) {
+			console.log(error); // catch error
+		}
+	};
+
+	const handleCollapse = () => setCollapsed(!collapsed);
+	useEffect(() => {
+		if (!collapsed) sendData();
+	}, [collapsed]);
+	return (
+		<View style={styles.container}>
+			<ScrollView contentContainerStyle={{ paddingTop: 10 }}>
+				<View style={styles.titleContainer}>
+					<Text style={styles.title}>ĐỒ THỊ THỜI GIAN THỰC</Text>
+					<Status />
+					<Battery />
+				</View>
+				<Chart labels={category} data={data[1].gas} daily unit={" %"} />
+				<Chart
+					labels={category}
+					data={data[1].temperature}
+					daily
+					unit={" °C"}
+				/>
+				<View style={styles.button}>
+					<Button
+						title="Xem theo ngày"
+						type="outline"
+						onPress={() => handleCollapse()}
+						buttonStyle={{ width: 160 }}
+					/>
+				</View>
+				<Collapsible collapsed={collapsed} align="center">
+					{!collapsed && (
+						<>
+							<Chart
+								labels={avgData.category}
+								data={avgData.data[1].avgGas}
+								daily={false}
+								unit={" %"}
+							/>
+							<Chart
+								labels={avgData.category}
+								data={avgData.data[1].avgTemperature}
+								daily={false}
+								unit={" °C"}
+							/>
+						</>
+					)}
+				</Collapsible>
+			</ScrollView>
+		</View>
+	);
+};
 
 const styles = StyleSheet.create({
 	container: {
@@ -210,5 +265,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+		marginBottom: 15,
 	},
 });

@@ -1,11 +1,5 @@
 import React, { Component } from "react";
-import {
-	Text,
-	View,
-	Dimensions,
-	StyleSheet,
-	TouchableOpacity,
-} from "react-native";
+import { Text, View, Dimensions, StyleSheet } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import Notification from "./Notification";
 
@@ -55,7 +49,7 @@ export class Chart extends Component {
 	getVisible = (visibleProps) => this.setState({ visible: !visibleProps });
 
 	componentDidUpdate(prevProps) {
-		const { labels, daily, data } = this.props;
+		const { labels } = this.props;
 		if (labels !== prevProps.labels) {
 			this.handleUpdateData();
 		}
@@ -70,16 +64,21 @@ export class Chart extends Component {
 
 	render() {
 		const { labels, data, visible, pointedData, index } = this.state;
-		const { unit, daily } = this.props;
+		const { unit } = this.props;
+		const title = {
+			"%": "Nồng độ CO",
+			"°C": "Nhiệt độ",
+		};
+
 		return (
 			<View>
 				<View style={styles.title}>
-					<Text>Bezier Line Chart</Text>
+					<Text>{title[unit.trim()]}</Text>
 				</View>
 				<Notification
 					visible={visible}
-					title={"chart"}
-					body={`${pointedData + unit.trim()} at ${labels[index]}`}
+					title={"Giá trị " + title[unit.trim()]}
+					body={`${pointedData + unit.trim()} lúc ${labels[index]}`}
 					getVisible={this.getVisible}
 				/>
 				<LineChart

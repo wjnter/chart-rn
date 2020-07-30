@@ -35,17 +35,8 @@ const Notification = ({ visible, title, body, getVisible }) => {
 							{/* Modal content */}
 							<View style={styles.centeredView}>
 								<View style={styles.modalView}>
-									<Text style={styles.modalText}>{title}</Text>
+									<Text style={styles.modalTitle}>{title}</Text>
 									<Text style={styles.modalText}>{body}</Text>
-									<TouchableHighlight
-										style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-										onPress={() => {
-											setModalVisible(false);
-											getVisible(visible);
-										}}
-									>
-										<Text style={styles.textStyle}>Hide Modal</Text>
-									</TouchableHighlight>
 								</View>
 							</View>
 							{/* End of Modal content */}
@@ -92,6 +83,12 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	modalText: {
+		textAlign: "center",
+		fontSize: 16,
+	},
+	modalTitle: {
+		fontWeight: "600",
+		fontSize: 19,
 		marginBottom: 15,
 		textAlign: "center",
 	},

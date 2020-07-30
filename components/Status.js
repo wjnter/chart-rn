@@ -16,13 +16,13 @@ const Status = () => {
 	};
 	const getVisible = (visibleProps) => setVisible(!visibleProps);
 	const body = data[0].timbersaw
-		? "I'm hearing sound of saw machine"
-		: "Safe forest!!";
+		? "Khu rừng đang an toàn!"
+		: "Đang phát hiện âm thanh cưa máy!!";
 	return (
 		<View>
 			<Notification
 				visible={visible}
-				title={"Status of Forest"}
+				title={"Tình trạng lâm tặc"}
 				body={body}
 				getVisible={getVisible}
 			/>

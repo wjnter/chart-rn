@@ -32,7 +32,7 @@ const SignInScreen = () => {
 						<Image style={styles.inputIcon} source={usernameImg} />
 						<TextInput
 							style={styles.inputs}
-							placeholder="Username"
+							placeholder="Tài khoản"
 							value={username}
 							onChangeText={setUsername}
 							underlineColorAndroid="transparent"
@@ -43,7 +43,7 @@ const SignInScreen = () => {
 						<Image style={styles.inputIcon} source={passwordImg} />
 						<TextInput
 							style={styles.inputs}
-							placeholder="Password"
+							placeholder="Mật khẩu"
 							value={password}
 							onChangeText={setPassword}
 							secureTextEntry
@@ -54,7 +54,7 @@ const SignInScreen = () => {
 						style={[styles.buttonContainer, styles.loginButton]}
 						onPress={() => signIn({ username, password })}
 					>
-						<Text style={styles.loginText}>Login</Text>
+						<Text style={styles.loginText}>Đăng nhập</Text>
 					</TouchableOpacity>
 				</View>
 				<View style={styles.emptyTrick}></View>
