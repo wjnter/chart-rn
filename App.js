@@ -2,12 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AsyncStorage, Button, Text, StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import {
-	CONSTANT_TYPE,
-	handleSetState,
-	CONSTANT_TYPE_AVG,
-	updateAvgData,
-} from "./utils";
+import { CONSTANT_TYPE_AVG, updateAvgData } from "./utils";
 import HomeScreen from "./screens/HomeScreen";
 import SignInScreen from "./screens/SignInScreen";
 import { AuthContext, DataContext } from "./context";
@@ -211,6 +206,8 @@ export default function App() {
 				}
 				setCategory(category);
 				setData(newData);
+			} else if (dataMessage[0] === "interval") {
+				console.log("received ...", dataMessage);
 			} else {
 				dataMessage[1].map((dataItem) => {
 					newAvgCategory.length < dataMessage[1].length / 2 &&
@@ -243,16 +240,12 @@ export default function App() {
 			console.log();
 		}
 	});
-	// useEffect(() => {
-	// 	getPushNotificationPermissions();
-	// });
-
 	return (
 		<>
 			<Notification
 				visible={visible}
-				title={"Error Connection"}
-				body={"Cannot connect to server. Please try again!"}
+				title={"Lỗi Kết Nối"}
+				body={"Không thể kết nối đến máy chủ. Vui lòng thử lại"}
 				getVisible={getVisible}
 			/>
 			<AuthContext.Provider value={authContext}>

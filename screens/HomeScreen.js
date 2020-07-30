@@ -1,62 +1,15 @@
 import React, { useState, useContext, useEffect } from "react";
 import Chart from "../components/Chart";
 import { DataContext } from "../context";
-import { Colors } from "react-native-paper";
-import {
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-	TouchableOpacity,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Button, Icon } from "react-native-elements";
 import Constants from "expo-constants";
 import Collapsible from "react-native-collapsible";
 import Status from "../components/Status";
-import Notification from "../components/Notification";
-import { calculateTime } from "../utils";
+import SpeedUp from "../components/SpeedUpButton";
+import Battery from "../components/Battery";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { AntDesign } from "@expo/vector-icons";
-
-const Battery = () => {
-	const { data } = useContext(DataContext);
-	const [count, setCount] = useState(data[0].battery || 0);
-	const [visible, setVisible] = useState(false);
-	const setProgress = () => ({
-		position: "absolute",
-		left: 0,
-		top: 0,
-		width: `${count}%`,
-		height: "100%",
-		backgroundColor: "#ffa726",
-	});
-	const getVisible = (visibleProps) => setVisible(!visibleProps);
-	const timeLife = (count / 100) * 5;
-	const body = `Pin còn hiệu lực trong ${calculateTime(timeLife)}.`;
-
-	useEffect(() => setCount(data[0].battery || 0), [data[0].battery]);
-	return (
-		<>
-			<Notification
-				visible={visible}
-				title={"Thời lượng pin"}
-				body={body}
-				getVisible={getVisible}
-			/>
-			<TouchableOpacity
-				style={styles.battery}
-				onPress={() => setVisible(!visible)}
-			>
-				<View style={styles.box}>
-					<View style={setProgress()}></View>
-					<View style={{ flex: 1, alignSelf: "center", bottom: 2 }}>
-						<Text style={{ flex: 1 }}>{count === 0 ? "" : count + "%"}</Text>
-					</View>
-				</View>
-			</TouchableOpacity>
-		</>
-	);
-};
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
@@ -109,8 +62,11 @@ const FirstNode = () => {
 			<ScrollView contentContainerStyle={{ paddingTop: 10 }}>
 				<View style={styles.titleContainer}>
 					<Text style={styles.title}>ĐỒ THỊ THỜI GIAN THỰC</Text>
-					<Status />
-					<Battery />
+				</View>
+				<View style={styles.accessibility}>
+					<SpeedUp nodeName="node1" />
+					<Status data={data[0].timbersaw} />
+					<Battery data={data[0].battery} />
 				</View>
 				<Chart labels={category} data={data[0].gas} daily unit={" %"} />
 				<Chart
@@ -172,8 +128,11 @@ const SecondNode = () => {
 			<ScrollView contentContainerStyle={{ paddingTop: 10 }}>
 				<View style={styles.titleContainer}>
 					<Text style={styles.title}>ĐỒ THỊ THỜI GIAN THỰC</Text>
-					<Status />
-					<Battery />
+				</View>
+				<View style={styles.accessibility}>
+					<SpeedUp nodeName="node2" />
+					<Status data={data[1].timbersaw} />
+					<Battery data={data[1].battery} />
 				</View>
 				<Chart labels={category} data={data[1].gas} daily unit={" %"} />
 				<Chart
@@ -237,10 +196,7 @@ const styles = StyleSheet.create({
 	},
 	titleContainer: {
 		flex: 1,
-		justifyContent: "space-between",
-		flexDirection: "row",
 		alignItems: "center",
-		justifyContent: "center",
 	},
 	battery: {
 		flex: 0.25,
@@ -255,7 +211,7 @@ const styles = StyleSheet.create({
 		height: 20,
 		borderRadius: 10,
 		borderWidth: 2,
-		borderColor: Colors.amber300,
+		borderColor: "#ffd54f",
 		margin: 20,
 		position: "relative",
 		flex: 1,
@@ -266,5 +222,13 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		marginBottom: 15,
+	},
+	accessibility: {
+		flex: 1,
+		justifyContent: "space-evenly",
+		flexDirection: "row",
+		alignItems: "flex-start",
+		marginTop: 20,
+		marginBottom: 20,
 	},
 });

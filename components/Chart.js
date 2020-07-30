@@ -1,5 +1,11 @@
 import React, { Component } from "react";
-import { Text, View, Dimensions, StyleSheet } from "react-native";
+import {
+	Text,
+	View,
+	Dimensions,
+	StyleSheet,
+	TouchableOpacity,
+} from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import Notification from "./Notification";
 
@@ -72,8 +78,8 @@ export class Chart extends Component {
 
 		return (
 			<View>
-				<View style={styles.title}>
-					<Text>{title[unit.trim()]}</Text>
+				<View style={styles.titleContainer}>
+					<Text style={styles.titleContent}>{title[unit.trim()]}</Text>
 				</View>
 				<Notification
 					visible={visible}
@@ -119,12 +125,13 @@ export class Chart extends Component {
 	}
 }
 const styles = StyleSheet.create({
-	title: {
+	titleContainer: {
 		flex: 1,
-		justifyContent: "space-between",
-		flexDirection: "row",
 		alignItems: "center",
-		justifyContent: "center",
+	},
+	titleContent: {
+		fontWeight: "500",
+		fontSize: 18,
 	},
 });
 export default Chart;
