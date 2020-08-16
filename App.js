@@ -262,7 +262,7 @@ export default function App() {
 									name="SignIn"
 									component={SignInScreen}
 									options={{
-										title: "Đăng nhập vào End Game UTE",
+										title: "Đăng nhập vào Màn hình chính",
 										// When logging out, a pop animation feels intuitive
 										animationTypeForReplace: state.isSignout ? "pop" : "push",
 									}}
@@ -270,15 +270,46 @@ export default function App() {
 							) : (
 								// User is signed in
 								<Stack.Screen
-									name="End Game UTE"
+									name=" "
 									component={HomeScreen}
 									options={{
+										headerLeft: () => (
+											<Text
+												style={{
+													fontSize: 18,
+													fontWeight: "500",
+													marginLeft: 20,
+													marginBottom: 15,
+												}}
+											>
+												Khóa luận Tốt nghiệp
+											</Text>
+										),
 										headerRight: () => (
-											<Button
-												onPress={() => authContext.signOut()}
-												title="Đăng xuất"
-												color="#000"
-											/>
+											<View
+												style={{
+													backgroundColor: "#fff",
+													borderRadius: 20,
+													marginRight: 15,
+													marginBottom: 15,
+													height: 40,
+													shadowColor: "#000",
+													shadowOffset: {
+														width: 0,
+														height: 3,
+													},
+													shadowOpacity: 0.27,
+													shadowRadius: 4.65,
+
+													elevation: 6,
+												}}
+											>
+												<Button
+													onPress={() => authContext.signOut()}
+													title="Đăng xuất"
+													color="#000"
+												/>
+											</View>
 										),
 									}}
 								/>

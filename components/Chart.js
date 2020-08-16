@@ -28,10 +28,12 @@ export class Chart extends Component {
 		const dateForAvg = [0];
 
 		if (daily) {
-			newData.push(data);
-			newLabels.push(labels);
-			newLabels.length > 10 && newLabels.shift();
-			newData.length > 10 && newData.shift();
+			if (data !== "") {
+				newData.push(data);
+				newLabels.push(labels);
+				newLabels.length > 10 && newLabels.shift();
+				newData.length > 10 && newData.shift();
+			}
 		} else {
 			labelsForAvg.push(...labels);
 			dateForAvg.push(...data);

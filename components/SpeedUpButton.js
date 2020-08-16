@@ -14,15 +14,15 @@ import { DataContext } from "../context";
 
 const SpeedUp = ({ nodeName }) => {
 	const selection = [
-		{ name: nodeName, value: 15, title: "15 giây" }, // 15s
-		{ name: nodeName, value: 60, title: "1 phút" }, // 60s
-		{ name: nodeName, value: 300, title: "5 phút" }, // 5m
-		{ name: nodeName, value: 600, title: "10 phút" }, // 10m
-		{ name: nodeName, value: 1200, title: "20 phút" }, // 20m
+		{ name: nodeName, value: 10, title: "10 giây" }, // 15s
+		{ name: nodeName, value: 30, title: "30 giây" }, // 60s
+		{ name: nodeName, value: 60, title: "1 phút" }, // 5m
+		{ name: nodeName, value: 300, title: "5 phút" }, // 10m
+		{ name: nodeName, value: 600, title: "10 phút" }, // 20m
 	];
 	const { websocket } = useContext(DataContext);
 
-	const [selectedValue, setSelectedValue] = useState(selection[0].value);
+	const [selectedValue, setSelectedValue] = useState(selection[2].value);
 	const [sendD, setSendD] = useState(false);
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(selectedValue);
@@ -103,7 +103,9 @@ const SpeedUp = ({ nodeName }) => {
 			</Modal>
 
 			<TouchableOpacity onPress={() => setModalVisible(true)}>
-				<Text style={{ marginBottom: 14, fontWeight: "500" }}>Chu kỳ</Text>
+				<Text style={{ marginBottom: 14, fontWeight: "500" }}>
+					Chu kỳ nhận dữ liệu
+				</Text>
 				<Icon name="ios-timer" type="ionicon" color="#ffa726" size={32} />
 			</TouchableOpacity>
 		</View>
@@ -143,9 +145,21 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	wrapper: {
-		flex: 0.3,
+		flex: 0.5,
 		alignItems: "center",
 		// justifyContent: "space-between",
+		// borderWidth: 1,
+		padding: 3,
+		borderRadius: 10,
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 3,
+		},
+		shadowOpacity: 0.27,
+		shadowRadius: 4.65,
+
+		elevation: 6,
 	},
 	buttonGroup: {
 		flex: 0.1,

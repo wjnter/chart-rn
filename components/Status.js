@@ -17,8 +17,9 @@ const Status = ({ data }) => {
 	const body = data
 		? "Khu rừng đang an toàn!"
 		: "Đang phát hiện âm thanh cưa máy!!";
+	const status = data ? "An Toàn" : "Nguy Hiểm";
 	return (
-		<View>
+		<View style={styles.shadow}>
 			<Notification
 				visible={visible}
 				title={"Tình trạng lâm tặc"}
@@ -29,7 +30,9 @@ const Status = ({ data }) => {
 				style={styles.wrapper}
 				onPress={() => setVisible(!visible)}
 			>
-				<Text style={{ marginBottom: 7, fontWeight: "500" }}>Tình trạng</Text>
+				<Text style={{ marginBottom: 7, fontWeight: "500" }}>
+					{`Tình trạng trộm gỗ (${status})`}
+				</Text>
 				<View style={statusStyles}></View>
 			</TouchableOpacity>
 		</View>
@@ -38,10 +41,23 @@ const Status = ({ data }) => {
 
 const styles = StyleSheet.create({
 	wrapper: {
-		flex: 0.3,
+		flex: 0.5,
 		alignItems: "center",
 		justifyContent: "space-between",
 		height: 60,
+		padding: 3,
+		borderRadius: 10,
+	},
+	shadow: {
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 3,
+		},
+		shadowOpacity: 0.27,
+		shadowRadius: 4.65,
+
+		elevation: 6,
 	},
 });
 

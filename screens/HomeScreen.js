@@ -1,7 +1,13 @@
 import React, { useState, useContext, useEffect } from "react";
 import Chart from "../components/Chart";
 import { DataContext } from "../context";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+	ScrollView,
+	StyleSheet,
+	Text,
+	View,
+	TouchableOpacity,
+} from "react-native";
 import { Button, Icon } from "react-native-elements";
 import Constants from "expo-constants";
 import Collapsible from "react-native-collapsible";
@@ -71,8 +77,10 @@ const FirstNode = () => {
 					<Text style={styles.title}>ĐỒ THỊ THỜI GIAN THỰC</Text>
 				</View>
 				<View style={styles.accessibility}>
-					<SpeedUp nodeName="node1" />
 					<Status data={data[0].timbersaw} />
+				</View>
+				<View style={styles.accessibility}>
+					<SpeedUp nodeName="1" />
 					<Battery data={data[0].battery} />
 				</View>
 				<Chart labels={category} data={data[0].gas} daily unit={" %"} />
@@ -82,14 +90,17 @@ const FirstNode = () => {
 					daily
 					unit={" °C"}
 				/>
-				<View style={styles.button}>
-					<Button
-						title="Xem theo ngày"
-						type={collapsed ? "outline" : "solid"}
-						onPress={() => handleCollapse()}
-						buttonStyle={{ width: 160 }}
-					/>
-				</View>
+
+				<TouchableOpacity
+					style={styles.buttonWrapper}
+					onPress={() => handleCollapse()}
+				>
+					<View style={collapsed ? styles.button : styles.activeButton}>
+						<Text style={collapsed ? styles.text : styles.activeText}>
+							Xem theo ngày
+						</Text>
+					</View>
+				</TouchableOpacity>
 				<Collapsible collapsed={collapsed} align="center">
 					{!collapsed && (
 						<>
@@ -137,8 +148,10 @@ const SecondNode = () => {
 					<Text style={styles.title}>ĐỒ THỊ THỜI GIAN THỰC</Text>
 				</View>
 				<View style={styles.accessibility}>
-					<SpeedUp nodeName="node2" />
 					<Status data={data[1].timbersaw} />
+				</View>
+				<View style={styles.accessibility}>
+					<SpeedUp nodeName="2" />
 					<Battery data={data[1].battery} />
 				</View>
 				<Chart labels={category} data={data[1].gas} daily unit={" %"} />
@@ -148,14 +161,17 @@ const SecondNode = () => {
 					daily
 					unit={" °C"}
 				/>
-				<View style={styles.button}>
-					<Button
-						title="Xem theo ngày"
-						type={collapsed ? "outline" : "solid"}
-						onPress={() => handleCollapse()}
-						buttonStyle={{ width: 160 }}
-					/>
-				</View>
+
+				<TouchableOpacity
+					style={styles.buttonWrapper}
+					onPress={() => handleCollapse()}
+				>
+					<View style={collapsed ? styles.button : styles.activeButton}>
+						<Text style={collapsed ? styles.text : styles.activeText}>
+							Xem theo ngày
+						</Text>
+					</View>
+				</TouchableOpacity>
 				<Collapsible collapsed={collapsed} align="center">
 					{!collapsed && (
 						<>
@@ -190,7 +206,10 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		fontSize: 22,
 		fontWeight: "300",
-		marginBottom: 5,
+		// marginBottom: 5,
+		paddingBottom: 10,
+		borderBottomWidth: 1,
+		borderColor: "#000",
 	},
 	header: {
 		backgroundColor: "#F5FCFF",
@@ -224,18 +243,52 @@ const styles = StyleSheet.create({
 		flex: 1,
 		overflow: "hidden",
 	},
-	button: {
+	buttonWrapper: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		marginBottom: 15,
+		marginVertical: 10,
+	},
+	button: {
+		width: 180,
+		paddingTop: 15,
+		paddingBottom: 15,
+		borderWidth: 1,
+		borderColor: "#ffa726",
+		flex: 1,
+		padding: 3,
+		justifyContent: "center",
+		alignItems: "center",
+		borderRadius: 15,
+	},
+	activeButton: {
+		width: 180,
+		paddingTop: 15,
+		paddingBottom: 15,
+		borderWidth: 1,
+		borderColor: "#ffa726",
+		flex: 1,
+		padding: 3,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#ffa726",
+		borderRadius: 15,
+	},
+	text: {
+		color: "#ffa726",
+		fontSize: 18,
+	},
+	activeText: {
+		color: "#fff",
+		fontSize: 18,
 	},
 	accessibility: {
 		flex: 1,
 		justifyContent: "space-evenly",
 		flexDirection: "row",
 		alignItems: "flex-start",
-		marginTop: 20,
-		marginBottom: 20,
+		marginTop: 10,
+		marginBottom: 10,
+		flexWrap: "wrap",
 	},
 });

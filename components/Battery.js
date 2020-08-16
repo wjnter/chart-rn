@@ -19,7 +19,9 @@ const Battery = ({ data }) => {
 	const timeLife = (count / 100) * 5;
 	const body = `Pin còn hiệu lực trong ${calculateTime(timeLife)}.`;
 
-	useEffect(() => setCount(data || 0), [data]);
+	useEffect(() => {
+		data !== "" && setCount(data || 0);
+	}, [data]);
 	return (
 		<>
 			<Notification
@@ -51,6 +53,18 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		height: 60,
+		padding: 3,
+		borderRadius: 10,
+
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 3,
+		},
+		shadowOpacity: 0.27,
+		shadowRadius: 4.65,
+
+		elevation: 6,
 	},
 	box: {
 		width: "100%",

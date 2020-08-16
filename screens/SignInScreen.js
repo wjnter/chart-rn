@@ -4,29 +4,27 @@ import {
 	Text,
 	View,
 	TextInput,
-	Button,
 	TouchableOpacity,
 	Image,
-	Alert,
 	Keyboard,
 	TouchableWithoutFeedback,
-	KeyboardAvoidingView,
-	Platform,
+	Dimensions,
 } from "react-native";
 import { AuthContext } from "../context";
 import usernameImg from "../assets/images/username.png";
 import passwordImg from "../assets/images/password.png";
-import logo from "../assets/images/logo.jpg";
+import feee from "../assets/images/feee.png";
 
+const windowWidth = Dimensions.get("window").width;
+console.log(windowWidth);
 const SignInScreen = () => {
 	const [username, setUsername] = React.useState("");
 	const [password, setPassword] = React.useState("");
-
 	const { signIn } = React.useContext(AuthContext);
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<View style={styles.container}>
-				<Image style={styles.logo} source={logo} />
+				<Image resizeMode="contain" style={styles.logo} source={feee} />
 				<View style={styles.box}>
 					<View style={styles.inputContainer}>
 						<Image style={styles.inputIcon} source={usernameImg} />
@@ -70,7 +68,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "space-around",
 		alignItems: "center",
-		backgroundColor: "#f5f5f5",
+		backgroundColor: "#fff",
 	},
 	box: {
 		width: 330,
@@ -81,12 +79,28 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 		borderColor: "#fff",
 		backgroundColor: "#Fff",
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 3,
+		},
+		shadowOpacity: 0.27,
+		shadowRadius: 4.65,
+
+		elevation: 6,
 	},
 	logo: {
-		width: 200,
-		height: 150,
+		width: windowWidth,
+		height: 90,
 		justifyContent: "center",
 		flex: 0.25,
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 3,
+		},
+		shadowOpacity: 0.27,
+		shadowRadius: 4.65,
 	},
 	inputContainer: {
 		borderBottomColor: "#F5FCFF",
